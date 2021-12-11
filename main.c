@@ -1,6 +1,7 @@
 #include <unistd.h>     
 #include <math.h>
 #include "ima.h"
+#include "Compression.h"
 
 Image *image;
 
@@ -129,41 +130,51 @@ void menuFunc(int item) {
   }
 }
 
-int main(int argc, char **argv) {  
+// int main(int argc, char **argv) {  
 
-  if (argc<2) {
-    fprintf(stderr, "Usage : palette nom_de_fichier\n");
-    exit(0);
-  }
+//   if (argc<2) {
+//     fprintf(stderr, "Usage : palette nom_de_fichier\n");
+//     exit(0);
+//   }
 
-  glutInit(&argc, argv); 
-  glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
-  glutInitWindowSize(640,480);  
-  glutInitWindowPosition(100, 100);  
-  glutCreateWindow("VPUP8");  
+//   glutInit(&argc, argv); 
+//   glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
+//   glutInitWindowSize(640,480);  
+//   glutInitWindowPosition(100, 100);  
+//   glutCreateWindow("VPUP8");  
 
-  Init(argv[1]);
+//   Init(argv[1]);
 
-  glutCreateMenu(menuFunc);
-  glutAddMenuEntry("Quit", 0);
-  glutAddMenuEntry("gris", 1);
-  glutAddMenuEntry("Sobel", 2);
-  glutAddMenuEntry("GRIS", 3);
-  glutAddMenuEntry("grey", 4);
-  glutAddMenuEntry("Sauver", 5);
-  glutAddMenuEntry("Informations", 6);
-  glutAddMenuEntry("moy_dif", 7);
-  glutAddMenuEntry("negatif", 8);
-  glutAddMenuEntry("inverse", 9);
-  glutAttachMenu(GLUT_LEFT_BUTTON);
+//   glutCreateMenu(menuFunc);
+//   glutAddMenuEntry("Quit", 0);
+//   glutAddMenuEntry("gris", 1);
+//   glutAddMenuEntry("Sobel", 2);
+//   glutAddMenuEntry("GRIS", 3);
+//   glutAddMenuEntry("grey", 4);
+//   glutAddMenuEntry("Sauver", 5);
+//   glutAddMenuEntry("Informations", 6);
+//   glutAddMenuEntry("moy_dif", 7);
+//   glutAddMenuEntry("negatif", 8);
+//   glutAddMenuEntry("inverse", 9);
+//   glutAttachMenu(GLUT_LEFT_BUTTON);
 
-  glutDisplayFunc(Display);  
-  glutReshapeFunc(Reshape);
-  glutKeyboardFunc(Keyboard);
+//   glutDisplayFunc(Display);  
+//   glutReshapeFunc(Reshape);
+//   glutKeyboardFunc(Keyboard);
   
-  glutMouseFunc(Mouse);
+//   glutMouseFunc(Mouse);
 
-  glutMainLoop();  
+//   glutMainLoop();  
 
-  return 1;
+//   return 1;
+// }
+
+int main(int argc, char **argv){
+  int a = 5 ;
+
+  printBits(sizeof(int), &a);
+  // unsigned char * c;
+  // c =(unsigned char*) &a;
+  // printf( " %u ",*c);
+
 }

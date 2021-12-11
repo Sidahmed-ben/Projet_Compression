@@ -123,6 +123,7 @@ void inverse (Image * im) {
   }
 
 
+
 void sobel (Image * im) {
   int i, j, a, b, c, mat [3][3], ma2[3][3], dep [3][3], ligne;
   int moy, limitex, limitey, size;
