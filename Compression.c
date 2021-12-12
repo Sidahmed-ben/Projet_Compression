@@ -2,6 +2,7 @@
 
 #include "Compression.h"
 #include <GL/gl.h>
+#include <stdlib.h>
 
 void printBits(size_t const size, void const * const ptr)
 {
@@ -60,10 +61,10 @@ void AffectBits(size_t const size, void const * const ptr , unsigned char *mon_b
     }
 }
 
+
 int tab_shift[24] = {7,7,7,6,6,6,5,5,5,4,4,4,3,3,3,2,2,2,1,1,1,0,0,0};
 
 int * tab_moy_creation(unsigned char * im, int nbr_pixel){
-    
     int * tab = (int*) calloc(nbr_pixel,sizeof(int));
     assert(tab);
     unsigned char  * ptr_char_tab;
@@ -95,10 +96,56 @@ int * tab_moy_creation(unsigned char * im, int nbr_pixel){
                 tmp_elm_tab |= bit; 
             }
             *ptr_char_tab= tmp_elm_tab;
-
         }
 
     } 
-
     return tab;
 }
+
+
+int tab_ind_rgb[24] =  {0,2,1,0,2,1,0,2,1,0,2,1,0,2,1,0,2,1,0,2,1,0,2,1};
+// int tab_shift[24] = {7,7,7,6,6,6,5,5,5,4,4,4,3,3,3,2,2,2,1,1,1,0,0,0};
+
+unsigned char * tab_couleur_creation(int * tab_moyenne ,int taille){
+
+    unsigned char * tab_couleur = (unsigned char*) calloc(taille*3, sizeof(unsigned char));
+    assert(tab_couleur);
+    unsigned char * tab_moy_char ;
+    unsigned char bit = 0;
+    unsigned char rgb[3] = {0};
+    int ind_rgb   = 0;
+    int ind_shift = 0;
+    int * tab_moy_ref = tab_moyenne;
+    for(int i = 0 ;i< taille ; i++){
+
+        tab_moy_char = ((unsigned char*)tab_moy_ref);
+        tab_moy_char+=3;
+
+        // printf(" %p  %u \n",tab_moy_char,*(tab_moy_char));
+        ind_shift = 0;
+        ind_rgb = 0;
+        rgb[0]=rgb[1]=rgb[2]=0;
+        for(int j = 0 ; j< 3 ;j++){
+            for(int k = 0 ; k< 8 ;k++){
+                bit = (*tab_moy_char) >> (7-k) & 1;
+                
+                bit = bit << tab_shift[ind_shift];
+                ind_shift++;
+                rgb[tab_ind_rgb[ind_rgb]] |= bit;
+                ind_rgb++;
+            }
+            // printf(" %p  %u \n",tab_moy_char,*(tab_moy_char));
+            tab_moy_char--;
+        }
+
+        tab_couleur[3*i]   = rgb[0];
+        tab_couleur[3*i+1] = rgb[1];
+        tab_couleur[3*i+2] = rgb[2];
+        tab_moy_ref++;
+        
+    }
+
+    return tab_couleur;
+}
+
+

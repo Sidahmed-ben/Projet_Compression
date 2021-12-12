@@ -12,6 +12,7 @@ void printBits(size_t const size, void const * const ptr);
 void AffectBits(size_t const size, void const * const ptr , unsigned char *mon_bloc );
 int * tab_moy_creation(unsigned char * im,int nbr_pixel);
 void print_tab_int_Bits(size_t const size, void const * const ptr);
+unsigned char * tab_couleur_creation(int * tab_moyenne ,int taille);
 
 
 

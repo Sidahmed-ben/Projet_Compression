@@ -1,9 +1,12 @@
+#include <stdlib.h>
 #include <unistd.h>     
 #include <math.h>
 #include "ima.h"
 #include "Compression.h"
 
 Image *image;
+void compression();
+
 
 #define ESCAPE 27
 
@@ -123,61 +126,120 @@ void menuFunc(int item) {
     negatif (image);
     break;
   case 9:
-    inverse (image);
+    inverse(image);
+    Display();
     break;
+  case 10:
+    printf(" je suis dans clut \n");
+    compression();
+    Display();
   default:
     break;
   }
 }
 
-// int main(int argc, char **argv) {  
 
-//   if (argc<2) {
-//     fprintf(stderr, "Usage : palette nom_de_fichier\n");
-//     exit(0);
-//   }
+void compression(){
+    int size = image->sizeX* image->sizeY *3;
+    unsigned char * tab_image = (unsigned char *)calloc(size, sizeof(unsigned char));
+    int * tab_resultat;
+    tab_resultat = tab_moy_creation(image->data,size/3);
+    unsigned char *tab_couleur;
+    tab_couleur = tab_couleur_creation(tab_resultat, size/3);
 
-//   glutInit(&argc, argv); 
-//   glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
-//   glutInitWindowSize(640,480);  
-//   glutInitWindowPosition(100, 100);  
-//   glutCreateWindow("VPUP8");  
-
-//   Init(argv[1]);
-
-//   glutCreateMenu(menuFunc);
-//   glutAddMenuEntry("Quit", 0);
-//   glutAddMenuEntry("gris", 1);
-//   glutAddMenuEntry("Sobel", 2);
-//   glutAddMenuEntry("GRIS", 3);
-//   glutAddMenuEntry("grey", 4);
-//   glutAddMenuEntry("Sauver", 5);
-//   glutAddMenuEntry("Informations", 6);
-//   glutAddMenuEntry("moy_dif", 7);
-//   glutAddMenuEntry("negatif", 8);
-//   glutAddMenuEntry("inverse", 9);
-//   glutAttachMenu(GLUT_LEFT_BUTTON);
-
-//   glutDisplayFunc(Display);  
-//   glutReshapeFunc(Reshape);
-//   glutKeyboardFunc(Keyboard);
-  
-//   glutMouseFunc(Mouse);
-
-//   glutMainLoop();  
-
-//   return 1;
-// }
-
-int main(int argc, char **argv){
-  unsigned int a = 4294967050 ;
-
-  
-  int * tab_resultat;
-  unsigned char tab_test[9] = {255,255,255,10,20,200,0,1,0};
-  int nbr_pixel = 3 ; 
-  tab_resultat = tab_moy_creation(tab_test,nbr_pixel);
-  print_tab_int_Bits(nbr_pixel, tab_resultat);
-
+    image->data = tab_couleur;
 
 }
+
+int main(int argc, char **argv) {  
+
+  if (argc<2) {
+    fprintf(stderr, "Usage : palette nom_de_fichier\n");
+    exit(0);
+  }
+
+  glutInit(&argc, argv); 
+  glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
+  glutInitWindowSize(640,480);  
+  glutInitWindowPosition(100, 100);  
+  glutCreateWindow("VPUP8");  
+
+  Init(argv[1]);
+
+  glutCreateMenu(menuFunc);
+  glutAddMenuEntry("Quit", 0);
+  glutAddMenuEntry("gris", 1);
+  glutAddMenuEntry("Sobel", 2);
+  glutAddMenuEntry("GRIS", 3);
+  glutAddMenuEntry("grey", 4);
+  glutAddMenuEntry("Sauver", 5);
+  glutAddMenuEntry("Informations", 6);
+  glutAddMenuEntry("moy_dif", 7);
+  glutAddMenuEntry("negatif", 8);
+  glutAddMenuEntry("inverse", 9);
+  glutAddMenuEntry("Clut", 10);
+  glutAttachMenu(GLUT_LEFT_BUTTON);
+
+  glutDisplayFunc(Display);  
+  glutReshapeFunc(Reshape);
+  glutKeyboardFunc(Keyboard);
+  
+  glutMouseFunc(Mouse);
+
+  glutMainLoop();  
+
+  return 1;
+}
+
+
+
+
+
+
+// int main(int argc, char **argv){
+
+
+
+
+//   int nbr_pixel = 5; 
+
+//   // unsigned int a = 4294967050 ;
+  
+//   int * tab_resultat;
+//   unsigned char tab_test[15] = {0,56,21,9,0,1,0,9,0,56,21,9,0,1,0};
+
+//   // printf("tab_test : ");
+//   // for(int i = 0 ; i< 9 ; i++)
+//   //   printf(" %d |",tab_test[i]);
+//   // printf("\n");
+
+
+//   tab_resultat = tab_moy_creation(tab_test,nbr_pixel);
+//   // printf("tab_resultat = ");
+//   // print_tab_int_Bits(3, tab_resultat);
+
+
+//   unsigned char *tab_couleur;
+//   tab_couleur = tab_couleur_creation(tab_resultat, nbr_pixel);
+
+//   // printf("tab_couleur = ");
+//   // printBits(9, tab_couleur);
+
+
+//   for(int i = 0; i< 15 ; i++){
+//     printf( " %u |",tab_couleur[i] );
+//   }
+
+
+
+
+
+
+//   free(tab_resultat);
+//   tab_resultat = NULL;
+//   // free(image);
+//   // image = NULL;
+
+//     glutMainLoop();  
+
+// }
