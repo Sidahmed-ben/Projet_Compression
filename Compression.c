@@ -60,10 +60,11 @@ void AffectBits(size_t const size, void const * const ptr , unsigned char *mon_b
     }
 }
 
-int tab_shift[24] = {7,7,7,6,6,6,5,5,5,4,4,4,3,3,3,1,1,1,0,0,0};
+int tab_shift[24] = {7,7,7,6,6,6,5,5,5,4,4,4,3,3,3,2,2,2,1,1,1,0,0,0};
 
-int * tab_moy_creation(unsigned char * im){
-    int * tab = (int*) calloc(1,sizeof(int));
+int * tab_moy_creation(unsigned char * im, int nbr_pixel){
+    
+    int * tab = (int*) calloc(nbr_pixel,sizeof(int));
     assert(tab);
     unsigned char  * ptr_char_tab;
     int * elem_tab ;
@@ -75,7 +76,7 @@ int * tab_moy_creation(unsigned char * im){
     int ind_rgb = 0;
     unsigned char rgb[3] ;
 
-    for(int i = 0 ;i < 1 ; i++){
+    for(int i = 0 ;i < nbr_pixel ; i++){
         ind_shift= 0;
         ind_rgb = 0;
         rgb[0] = im[3*i];
@@ -83,7 +84,7 @@ int * tab_moy_creation(unsigned char * im){
         rgb[2] = im[3*i+1];
         elem_tab = tab+i;
         for(int j = 0 ; j< 3 ; j++){
-            ptr_char_tab = (unsigned char *)elem_tab+j;
+            ptr_char_tab = (unsigned char *)elem_tab+(3-j);
             tmp_elm_tab = 0;
             bit = 0;
             for(int k = 0 ;k< 8; k++){

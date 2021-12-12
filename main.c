@@ -170,18 +170,14 @@ void menuFunc(int item) {
 // }
 
 int main(int argc, char **argv){
-  int a = 5 ;
+  unsigned int a = 4294967050 ;
 
   
   int * tab_resultat;
-  unsigned char tab_test[4] = {10,20,200};
- 
-  tab_resultat = tab_moy_creation(tab_test);
-  print_tab_int_Bits(1, tab_resultat);
+  unsigned char tab_test[9] = {255,255,255,10,20,200,0,1,0};
+  int nbr_pixel = 3 ; 
+  tab_resultat = tab_moy_creation(tab_test,nbr_pixel);
+  print_tab_int_Bits(nbr_pixel, tab_resultat);
 
-
-  // unsigned char * c;
-  // c =(unsigned char*) &a;
-  // printf( " %u ",*c);
 
 }
