@@ -31,7 +31,6 @@ void Mouse(int button, int state, int x, int y) {
 }
 
 int Init(char *s) {
-
   image = (Image *) malloc(sizeof(Image));
   if (image == NULL) {
     fprintf(stderr, "Out of memory\n");
@@ -60,6 +59,7 @@ int ReInit() {
   
   return (0);
 }
+
 
 void Display(void) {
   
@@ -172,7 +172,14 @@ void menuFunc(int item) {
 int main(int argc, char **argv){
   int a = 5 ;
 
-  printBits(sizeof(int), &a);
+  
+  int * tab_resultat;
+  unsigned char tab_test[4] = {10,20,200};
+ 
+  tab_resultat = tab_moy_creation(tab_test);
+  print_tab_int_Bits(1, tab_resultat);
+
+
   // unsigned char * c;
   // c =(unsigned char*) &a;
   // printf( " %u ",*c);

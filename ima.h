@@ -1,17 +1,17 @@
+
+
+
+#ifndef IMA
+#define IMA
+
 #include <stdio.h> 
 #include <stdlib.h>
 #include <assert.h>
 
-// #define __OSX__
-// #ifndef __OSX__
-// /* pour Bocal */
+
 #include <GL/gl.h>      
 #include <GL/glu.h>
 #include <GL/glut.h>
-
-// #else
-// /* pour mac */
-// #include <GLUT/glut.h>
 
     struct Image {
         unsigned long sizeX;
@@ -32,4 +32,4 @@
     void sobel (Image *);
 
 
- //#endif
+ #endif
