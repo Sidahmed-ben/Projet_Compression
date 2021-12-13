@@ -144,35 +144,52 @@ void compression(){
   int size = image->sizeX* image->sizeY *3;
   unsigned char * tab_image = (unsigned char *)calloc(size, sizeof(unsigned char));
   unsigned int * tab_resultat;
+
+
+  // creation du tableau des moyennes des couleurs
   tab_resultat = tab_moy_creation(image->data,size/3);
-  unsigned char *tab_couleur;
+  // unsigned char *tab_couleur;
 
-
-
-  for(int i = 0 ;i< 10 ;i++){
-    printf(" %u |",tab_resultat[i]);
-  }
+  // for(int i = 0 ;i< 10 ;i++){
+  //   printf(" %u |",tab_resultat[i]);
+  // }
   printf("\n");
 
-  quickSort(tab_resultat, 0, (size/3 -1));
+  // Trier le tableau des moyennes avec QuickSort et mettre à jour les indices des couleurs dans l'image
+  quickSort(tab_resultat, 0, (size/3)-1);
 
   // tab_resultat = reorganiser_tab_int(tab_resultat,size/3);
   // reorganiser_tab_int(tab_resultat,size/3);
 
-  printf(" Après oranisation ");
-  for(int i = 0 ;i< 10 ;i++){
-    printf(" %u |",tab_resultat[i]);
-  }
-  printf("\n");
+  // printf(" Après oranisation ");
+  // for(int i = 0 ;i< 10 ;i++){
+  //   printf(" %u |",tab_resultat[i]);
+  // }
+  // printf("\n");
 
+  // tab_couleur = tab_couleur_creation(tab_resultat, size/3);
 
-  tab_couleur = tab_couleur_creation(tab_resultat, size/3);
+  // Compression du tableau des couleurs triés et suppression des répétition 
+  int nbr_el_cmp = compter_taille_tab_compresse(tab_resultat, size/3);
+  etc  * compresse_tab_result = compresse_clut(tab_resultat,size/3,nbr_el_cmp);
+  // for(int i = 0 ; i< size/3; i++){
+  //   printf(" %u -> %u fois |\n",compresse_tab_result[i].val,compresse_tab_result[i].nbr_pixel_val);
+  // }
+
+  // redécomresser lea tableau des moyennes des couleurs  
+  unsigned int * tab_dcmp;
+  tab_dcmp = tab_decompresse(compresse_tab_result,nbr_el_cmp,size/3);
+
+  // Transformer le tableau des moyenne en un tableau rgb pour le réafficher
+  unsigned char *tab_couleur;
+  tab_couleur = tab_couleur_creation(tab_dcmp, size/3);
+
 
   image->data = tab_couleur;
 
-
-
 }
+
+
 
 int main(int argc, char **argv) {  
   if (argc<2) {
@@ -226,12 +243,10 @@ void Affiche_tab(unsigned int *tab, int size){
 
 // int main(int argc, char **argv){
 
-//   int nbr_pixel = 5; 
-
+//   int nbr_pixel = 8; 
 //   // unsigned int a = 4294967050 ;
-  
 //   unsigned int * tab_resultat;
-//   unsigned char tab_test[15] = {6,0,0,1,0,0,2,0,0,9,0,0,1,0,0};
+//   unsigned char tab_test[24] = {250,200,0,1,0,250,6,0,0,7,0,8,1,0,0,1,0,0,1,9,0,9,0,0};
 //   // unsigned int tab_test[15] = {0,56,21,9,0,1,0,9,0,56,21,9,0,1,1};
 
 
@@ -240,21 +255,31 @@ void Affiche_tab(unsigned int *tab, int size){
 //   // unsigned char *tab_couleur;
 //   // tab_couleur = tab_couleur_creation(tab_resultat, nbr_pixel);
 
-//   Affiche_tab(tab_resultat, 5);
+//   Affiche_tab(tab_resultat, nbr_pixel);
 //   print_tab_ind_couleur(nbr_pixel);
-//   quickSort(tab_resultat, 0, 5-1);
+//   quickSort(tab_resultat, 0, nbr_pixel-1);
 //   print_tab_ind_couleur(nbr_pixel);
-//   Affiche_tab(tab_resultat, 5);
+//   Affiche_tab(tab_resultat, nbr_pixel);
 
-//   tab_resultat = reorganiser_tab_int(tab_resultat,5);
+//   // tab_resultat = reorganiser_tab_int(tab_resultat,nbr_pixel);
 
-//   // 
-//   printf(" Après oranisation ");
-//   for(int i = 0 ;i< 5 ;i++){
+  
+//   printf(" Après organisation ");
+//   for(int i = 0 ;i< nbr_pixel ;i++){
 //     printf(" %u |",tab_resultat[i]);
 //   }
 //   printf("\n");
 
+
+//   //  Partie compression du tableau de Clut ordonné
+//   int nbr_el_cmp = compter_taille_tab_compresse(tab_resultat, nbr_pixel);
+//   etc  * compresse_tab_result = compresse_clut(tab_resultat,nbr_pixel,nbr_el_cmp);
+//   unsigned int * tab_dcmp;
+//   tab_dcmp = tab_decompresse(compresse_tab_result,nbr_el_cmp,nbr_pixel);
+
+
+//   unsigned char *tab_couleur;
+//   tab_couleur = tab_couleur_creation(tab_dcmp, nbr_pixel);
 
 //   // free(tab_resultat);
 //   // tab_resultat = NULL;
@@ -262,3 +287,5 @@ void Affiche_tab(unsigned int *tab, int size){
 //   // image = NULL;
 
 // }
+
+

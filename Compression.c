@@ -183,7 +183,7 @@ void quickSort(unsigned int t[], int g, int d) {
 void print_tab_ind_couleur(int size){
     printf("tab_ind_coul : ");
     for(int i = 0 ; i< size; i++){
-        printf(" %d |",tab_ind_coul_im[i]);
+        printf(" %u |",tab_ind_coul_im[i]);
     }
     printf("\n");
 }
@@ -207,4 +207,71 @@ unsigned int * reorganiser_tab_int(unsigned int * tab_int ,int size){
     free(tab_int);
     tab_int = NULL;
     return tab_int_interm;
+}
+
+int compter_taille_tab_compresse(unsigned int * tab_resultat_ordonne, int nbr_pixel){
+    int nbr_el_compresse = 1;
+    unsigned int tomp = tab_resultat_ordonne[0];
+    for(int i = 1 ; i< nbr_pixel; i++){
+        if(tomp != tab_resultat_ordonne[i]){
+            nbr_el_compresse++;
+            tomp = tab_resultat_ordonne[i];
+        }
+    }
+
+    return nbr_el_compresse;
+}
+
+etc * compresse_clut(unsigned int * tab_resultat_ordonne,int nbr_pixel, int nbr_el_cmp){
+    // printf(" nombre element compresed = %d\n ",nbr_el_compresse);
+
+    int nbr_el_compresse = compter_taille_tab_compresse(tab_resultat_ordonne,nbr_pixel);
+
+    etc * tab_el_compresse = (etc*)calloc(nbr_el_compresse , sizeof(etc));
+    int ind_tab_el_cmp = 0;
+    assert(tab_el_compresse);
+    unsigned int tmp = tab_resultat_ordonne[0];
+    tab_el_compresse[0].val = tmp;
+    tab_el_compresse[0].nbr_pixel_val = 1;
+
+
+    for(int i = 1 ; i< nbr_pixel; i++){
+        if( tmp == tab_resultat_ordonne[i] ){
+            tab_el_compresse[ind_tab_el_cmp].nbr_pixel_val++;
+        }else{
+            tmp = tab_resultat_ordonne[i];
+            tab_el_compresse[++ind_tab_el_cmp].val = tmp;
+            tab_el_compresse[ind_tab_el_cmp].nbr_pixel_val = 1;
+        }
+    }
+
+    for(int i = 0 ; i< nbr_el_compresse; i++){
+    // printf(" %u -> %u fois \n",tab_el_compresse[i].val,tab_el_compresse[i].nbr_pixel_val);
+  }
+
+    return tab_el_compresse;
+}
+
+
+unsigned int * tab_decompresse(etc * tab_compressed, int nbr_el_cmp, int nbr_pixel){
+
+    unsigned int * tab_dcmp = (unsigned int *) calloc(nbr_pixel,sizeof(unsigned int));
+    assert(tab_dcmp);
+    int indice_tab_coul = 0;;
+    for(int j = 0 ; j< nbr_el_cmp ; j++){
+        for(int i = 0 ;i< tab_compressed[j].nbr_pixel_val ; i++){
+            tab_dcmp[tab_ind_coul_im[indice_tab_coul]] = tab_compressed[j].val;
+            indice_tab_coul++;
+        }
+    }
+
+    // printf(" tableau après décompression ");
+
+    // for(int i = 0; i< nbr_pixel; i++){
+    //     printf(" %u |",tab_dcmp[i]);
+    // }
+    // printf("\n");
+
+    return tab_dcmp;
+    
 }
