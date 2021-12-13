@@ -10,10 +10,11 @@
 
 void printBits(size_t const size, void const * const ptr);
 void AffectBits(size_t const size, void const * const ptr , unsigned char *mon_bloc );
-int * tab_moy_creation(unsigned char * im,int nbr_pixel);
+unsigned int * tab_moy_creation(unsigned char * im,int nbr_pixel);
 void print_tab_int_Bits(size_t const size, void const * const ptr);
-unsigned char * tab_couleur_creation(int * tab_moyenne ,int taille);
-
-
+unsigned char * tab_couleur_creation(unsigned int * tab_moyenne ,int taille);
+void quickSort(unsigned int t[], int g, int d);
+void print_tab_ind_couleur(int size);
+unsigned int * reorganiser_tab_int(unsigned int * tab_int ,int size);
 
 #endif

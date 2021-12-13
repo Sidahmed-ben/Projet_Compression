@@ -132,6 +132,7 @@ void menuFunc(int item) {
   case 10:
     printf(" je suis dans clut \n");
     compression();
+
     Display();
   default:
     break;
@@ -140,23 +141,45 @@ void menuFunc(int item) {
 
 
 void compression(){
-    int size = image->sizeX* image->sizeY *3;
-    unsigned char * tab_image = (unsigned char *)calloc(size, sizeof(unsigned char));
-    int * tab_resultat;
-    tab_resultat = tab_moy_creation(image->data,size/3);
-    unsigned char *tab_couleur;
-    tab_couleur = tab_couleur_creation(tab_resultat, size/3);
+  int size = image->sizeX* image->sizeY *3;
+  unsigned char * tab_image = (unsigned char *)calloc(size, sizeof(unsigned char));
+  unsigned int * tab_resultat;
+  tab_resultat = tab_moy_creation(image->data,size/3);
+  unsigned char *tab_couleur;
 
-    image->data = tab_couleur;
+
+
+  for(int i = 0 ;i< 10 ;i++){
+    printf(" %u |",tab_resultat[i]);
+  }
+  printf("\n");
+
+  quickSort(tab_resultat, 0, (size/3 -1));
+
+  // tab_resultat = reorganiser_tab_int(tab_resultat,size/3);
+  // reorganiser_tab_int(tab_resultat,size/3);
+
+  printf(" Après oranisation ");
+  for(int i = 0 ;i< 10 ;i++){
+    printf(" %u |",tab_resultat[i]);
+  }
+  printf("\n");
+
+
+  tab_couleur = tab_couleur_creation(tab_resultat, size/3);
+
+  image->data = tab_couleur;
+
+
 
 }
 
 int main(int argc, char **argv) {  
-
   if (argc<2) {
     fprintf(stderr, "Usage : palette nom_de_fichier\n");
     exit(0);
   }
+
 
   glutInit(&argc, argv); 
   glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
@@ -193,53 +216,49 @@ int main(int argc, char **argv) {
 
 
 
-
+void Affiche_tab(unsigned int *tab, int size){
+  for(int i = 0 ;i< size ; i++){
+    printf(" %u |",tab[i]);
+  }
+  printf("\n");
+}
 
 
 // int main(int argc, char **argv){
-
-
-
 
 //   int nbr_pixel = 5; 
 
 //   // unsigned int a = 4294967050 ;
   
-//   int * tab_resultat;
-//   unsigned char tab_test[15] = {0,56,21,9,0,1,0,9,0,56,21,9,0,1,0};
-
-//   // printf("tab_test : ");
-//   // for(int i = 0 ; i< 9 ; i++)
-//   //   printf(" %d |",tab_test[i]);
-//   // printf("\n");
+//   unsigned int * tab_resultat;
+//   unsigned char tab_test[15] = {6,0,0,1,0,0,2,0,0,9,0,0,1,0,0};
+//   // unsigned int tab_test[15] = {0,56,21,9,0,1,0,9,0,56,21,9,0,1,1};
 
 
 //   tab_resultat = tab_moy_creation(tab_test,nbr_pixel);
-//   // printf("tab_resultat = ");
-//   // print_tab_int_Bits(3, tab_resultat);
+//   print_tab_int_Bits(5, tab_resultat);
+//   // unsigned char *tab_couleur;
+//   // tab_couleur = tab_couleur_creation(tab_resultat, nbr_pixel);
 
+//   Affiche_tab(tab_resultat, 5);
+//   print_tab_ind_couleur(nbr_pixel);
+//   quickSort(tab_resultat, 0, 5-1);
+//   print_tab_ind_couleur(nbr_pixel);
+//   Affiche_tab(tab_resultat, 5);
 
-//   unsigned char *tab_couleur;
-//   tab_couleur = tab_couleur_creation(tab_resultat, nbr_pixel);
+//   tab_resultat = reorganiser_tab_int(tab_resultat,5);
 
-//   // printf("tab_couleur = ");
-//   // printBits(9, tab_couleur);
-
-
-//   for(int i = 0; i< 15 ; i++){
-//     printf( " %u |",tab_couleur[i] );
+//   // 
+//   printf(" Après oranisation ");
+//   for(int i = 0 ;i< 5 ;i++){
+//     printf(" %u |",tab_resultat[i]);
 //   }
+//   printf("\n");
 
 
-
-
-
-
-//   free(tab_resultat);
-//   tab_resultat = NULL;
+//   // free(tab_resultat);
+//   // tab_resultat = NULL;
 //   // free(image);
 //   // image = NULL;
-
-//     glutMainLoop();  
 
 // }

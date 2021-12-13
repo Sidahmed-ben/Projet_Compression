@@ -13,6 +13,8 @@ void gris_uniforme(Image * i) {
 	*im++ = val;
   }
 }
+
+
 void gris (Image * im) {
   int j, r, g, b, size, moy;
   GLubyte * ptr, val;
