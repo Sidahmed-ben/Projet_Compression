@@ -24,8 +24,9 @@ unsigned char * tab_couleur_creation(unsigned int * tab_moyenne ,int taille);
 void quickSort(unsigned int t[], int g, int d);
 void print_tab_ind_couleur(int size);
 unsigned int * reorganiser_tab_int(unsigned int * tab_int ,int size);
-etc * compresse_clut(unsigned int * tab_resultat_ordonne,int nbr_pixel, int nbr_el_cmp);
+unsigned int * compresse_clut(unsigned int * tab_resultat_ordonne,int nbr_pixel, int nbr_el_cmp);
 int compter_taille_tab_compresse(unsigned int * tab_resultat_ordonne, int nbr_pixel);
-unsigned int * tab_decompresse(etc * tab_compressed, int nbr_el_cmp, int nbr_pixel);
+unsigned int * tab_decompresse(unsigned int * tab_compressed, int nbr_el_cmp, int nbr_pixel);
+void trier_tableau_ind(int size);
 
 #endif
