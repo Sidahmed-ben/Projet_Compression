@@ -160,43 +160,31 @@ unsigned char * tab_couleur_creation(unsigned int * tab_moyenne ,int taille){
     return tab_couleur;
 }
 
-unsigned char * tab_couleur_reff_creation(unsigned int * tab_moyenne ,int taille){
+unsigned char * tab_couleur_creation_depuis_rgb_compresse(unsigned char * tab_coul_cmp ,int nbr_pixel,int nbr_el_cmp){
 
-    unsigned char * tab_couleur = (unsigned char*) calloc(taille*3, sizeof(unsigned char));
+    unsigned char * tab_couleur = (unsigned char*) calloc(nbr_pixel*3, sizeof(unsigned char));
     assert(tab_couleur);
-    unsigned char * tab_moy_char ;
-    unsigned char bit = 0;
-    unsigned char rgb[3] = {0};
-    int ind_rgb   = 0;
-    int ind_shift = 0;
-    unsigned int * tab_moy_ref = tab_moyenne;
-    for(int i = 0 ;i< taille ; i++){
 
-        tab_moy_char = ((unsigned char*)tab_moy_ref);
-        tab_moy_char+=3;
+    int ind_tab_coul_cmp = 0;
+    int ind_tab_rep = 0;
+    int ind_tab_couleur_img = 0;
 
-        // printf(" %p  %u \n",tab_moy_char,*(tab_moy_char));
-        ind_shift = 0;
-        ind_rgb = 0;
-        rgb[0]=rgb[1]=rgb[2]=0;
-        for(int j = 0 ; j< 3 ;j++){
-            for(int k = 0 ; k< 8 ;k++){
-                bit = (*tab_moy_char) >> (7-k) & 1;
-                bit = bit << tab_shift[ind_shift];
-                ind_shift++;
-                rgb[tab_ind_rgb[ind_rgb]] |= bit;
-                ind_rgb++;
-            }
-            // printf(" %p  %u \n",tab_moy_char,*(tab_moy_char));
-            tab_moy_char--;
+    for(int i = 0 ; i< nbr_el_cmp /* a verifier */ ; i++){
+        for(int j = 0 ; j < tab_repetition[ind_tab_rep]  ; j++){
+            tab_couleur[tab_ind_coul_im[ind_tab_couleur_img]*3]   = tab_coul_cmp[ind_tab_coul_cmp*3];
+            tab_couleur[tab_ind_coul_im[ind_tab_couleur_img]*3+1] = tab_coul_cmp[ind_tab_coul_cmp*3+1];
+            tab_couleur[tab_ind_coul_im[ind_tab_couleur_img]*3+2] = tab_coul_cmp[ind_tab_coul_cmp*3+2];
+            ind_tab_couleur_img++;
         }
+        ind_tab_rep++;
+        ind_tab_coul_cmp++;
 
-        tab_couleur[3*i]   = rgb[0];
-        tab_couleur[3*i+1] = rgb[1];
-        tab_couleur[3*i+2] = rgb[2];
-        tab_moy_ref++;
-        
     }
+
+    // for(int i = 0 ;i< nbr_el_cmp; i++){
+    //     printf(" tab_ind_coul_im[ind_tab_couleur_img] = %d  \n",tab_ind_coul_im[i]);
+    // }    
+
 
     return tab_couleur;
 }
@@ -304,7 +292,7 @@ unsigned int * compresse_clut(unsigned int * tab_resultat_ordonne,int nbr_pixel,
     }
 
     for(int i = 0 ; i< nbr_el_compresse; i++){
-    printf(" %u -> %u fois \n",tab_el_compresse[i],tab_repetition[i]);
+    // printf(" %u -> %u fois \n",tab_el_compresse[i],tab_repetition[i]);
   }
 
 
@@ -334,22 +322,22 @@ void quickSort_indice(unsigned int t[], int g, int d) {
 
 
 
-void trier_tableau_ind(int size){
-    tab_couleur_ord = (int * ) calloc(size, sizeof(int));
-    assert(tab_couleur_ord);
-    for(int i = 0; i< size ; i++){
-        tab_couleur_ord[i] = i;
-    }
+// void trier_tableau_ind(int size){
+//     tab_couleur_ord = (int * ) calloc(size, sizeof(int));
+//     assert(tab_couleur_ord);
+//     for(int i = 0; i< size ; i++){
+//         tab_couleur_ord[i] = i;
+//     }
 
-    quickSort_indice((unsigned int *)tab_ind_coul_im, 0, size-1 ); 
+//     quickSort_indice((unsigned int *)tab_ind_coul_im, 0, size-1 ); 
 
-    printf("tab_ind_ord = ");
-    for(int i = 0 ; i< size ; i++){
-        printf(" %d |",tab_couleur_ord[i]);
-    }
-    printf("\n");
+//     printf("tab_ind_ord = ");
+//     for(int i = 0 ; i< size ; i++){
+//         printf(" %d |",tab_couleur_ord[i]);
+//     }
+//     printf("\n");
 
-}
+// }
 
 
 

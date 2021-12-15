@@ -177,15 +177,36 @@ void compression(){
   //   printf(" %u -> %u fois |\n",compresse_tab_result[i].val,compresse_tab_result[i].nbr_pixel_val);
   // }
 
-  // redécomresser lea tableau des moyennes des couleurs  
-  unsigned int * tab_dcmp;
-  tab_dcmp = tab_decompresse(compresse_tab_result,nbr_el_cmp,size/3);
+  // // redécomresser lea tableau des moyennes des couleurs  
+  // unsigned int * tab_dcmp;
+  // tab_dcmp = tab_decompresse(compresse_tab_result,nbr_el_cmp,size/3);
 
-  // Transformer le tableau des moyenne en un tableau rgb pour le réafficher
-  unsigned char *tab_couleur;
-  tab_couleur = tab_couleur_creation(tab_dcmp, size/3);
+  // // Transformer le tableau des moyenne en un tableau rgb pour le réafficher
+  // unsigned char *tab_couleur;
+  // tab_couleur = tab_couleur_creation(tab_dcmp, size/3);
 
-  image->data = tab_couleur;
+  unsigned char * compressed_tab_couleur = tab_couleur_creation(compresse_tab_result, nbr_el_cmp*3);
+
+  //   printf("compresse_tab_couleur : ");
+  // for(int i = 0 ;i< nbr_el_cmp*3; i++){
+  //   printf(" %u |",compressed_tab_couleur[i]);
+  // }
+  // printf("\n");
+
+
+  unsigned char * tab_coul_depuis_coul_cmp ;
+  tab_coul_depuis_coul_cmp = tab_couleur_creation_depuis_rgb_compresse(compressed_tab_couleur ,size/3,nbr_el_cmp);
+
+  // printf(" tab_coul_depuis_coul_cmp : ");
+  // for(int i = 0 ;i< size; i++){
+  //   printf(" %u |",tab_coul_depuis_coul_cmp[i]);
+  // }
+  // printf("\n");
+
+
+
+
+  image->data = tab_coul_depuis_coul_cmp;
 
 }
 
@@ -246,7 +267,7 @@ int main(int argc, char **argv){
   int nbr_pixel = 8; 
   // unsigned int a = 4294967050 ;
   unsigned int * tab_resultat;
-  unsigned char tab_test[24] = {3,0,0,45,0,234,1,34,0,1,0,0,1,200,0,1,0,0,1,6,0,1,0,0};
+  unsigned char tab_test[24] = {3,0,0,45,0,4,1,34,0,1,0,0,1,200,0,1,0,0,1,6,0,1,0,0};
   
   // unsigned int tab_test[15] = {0,56,21,9,0,1,0,9,0,56,21,9,0,1,1};
 
@@ -275,42 +296,68 @@ int main(int argc, char **argv){
   //  Partie compression du tableau de Clut ordonné
   int nbr_el_cmp = compter_taille_tab_compresse(tab_resultat, nbr_pixel);
   unsigned int * compresse_tab_result = compresse_clut(tab_resultat,nbr_pixel,nbr_el_cmp);
-
-  printf("compresse_tab_result : ");
+    printf("compresse_tab_result : ");
   for(int i = 0 ;i< nbr_el_cmp; i++){
     printf(" %u |",compresse_tab_result[i]);
   }
   printf("\n");
 
-  unsigned int * tab_dcmp;
-  tab_dcmp = tab_decompresse(compresse_tab_result,nbr_el_cmp,nbr_pixel);
+  unsigned char * compressed_tab_couleur = tab_couleur_creation(compresse_tab_result, nbr_el_cmp*3);
 
-  printf("tab_dcmp : ");
-  for(int i = 0 ;i< nbr_pixel; i++){
-    printf(" %u |",tab_dcmp[i]);
-  }
-  printf("\n");
-
-  unsigned char *tab_couleur;
-  tab_couleur = tab_couleur_creation(tab_dcmp, nbr_pixel);
-    printf("tab_couleur : ");
-  for(int i = 0 ;i< nbr_pixel*3; i++){
-    printf(" %u |",tab_couleur[i]);
-  }
-  printf("\n");
-
-
-  unsigned char *tab_couleur_cmp;
-  tab_couleur_cmp = tab_couleur_creation(compresse_tab_result, nbr_el_cmp);
-
-  printf("tab_couleur_cmp : ");
+    printf("compresse_tab_couleur : ");
   for(int i = 0 ;i< nbr_el_cmp*3; i++){
-    printf(" %u |",tab_couleur_cmp[i]);
+    printf(" %u |",compressed_tab_couleur[i]);
   }
   printf("\n");
 
+  // unsigned int * tab_dcmp;
+  // tab_dcmp = tab_decompresse(compresse_tab_result,nbr_el_cmp,nbr_pixel);
 
-  trier_tableau_ind(nbr_pixel);  
+  // printf("tab_dcmp : ");
+  // for(int i = 0 ;i< nbr_pixel; i++){
+  //   printf(" %u |",tab_dcmp[i]);
+  // }
+  // printf("\n");
+
+  // print_tab_ind_couleur(nbr_pixel);
+
+  // unsigned char *tab_couleur;
+  // tab_couleur = tab_couleur_creation(tab_dcmp, nbr_pixel);
+  //   printf("tab_couleur : ");
+  // for(int i = 0 ;i< nbr_pixel*3; i++){
+  //   printf(" %u |",tab_couleur[i]);
+  // }
+  // printf("\n");
+
+  // print_tab_ind_couleur(nbr_pixel);
+
+
+  // unsigned char *tab_couleur_cmp;
+  // tab_couleur_cmp = tab_couleur_creation(compresse_tab_result, nbr_el_cmp);
+
+  // printf("tab_couleur_cmp : ");
+  // for(int i = 0 ;i< nbr_el_cmp*3; i++){
+  //   printf(" %u |",tab_couleur_cmp[i]);
+  // }
+  // printf("\n");
+  // print_tab_ind_couleur(nbr_pixel);
+
+  
+  // trier_tableau_ind(nbr_pixel);  
+  // printf("aprés trier \n");
+  // print_tab_ind_couleur(nbr_pixel);
+
+
+  unsigned char * tab_coul_depuis_coul_cmp ;
+  tab_coul_depuis_coul_cmp = tab_couleur_creation_depuis_rgb_compresse(compressed_tab_couleur ,nbr_pixel,nbr_el_cmp);
+
+  printf(" tab_coul_depuis_coul_cmp : ");
+  for(int i = 0 ;i< nbr_pixel*3; i++){
+    printf(" %u |",tab_coul_depuis_coul_cmp[i]);
+  }
+  printf("\n");
+
+  // print_tab_ind_couleur(nbr_pixel);
 
   // free(tab_resultat);
   // tab_resultat = NULL;
