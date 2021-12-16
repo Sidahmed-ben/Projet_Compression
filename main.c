@@ -4,6 +4,7 @@
 #include "ima.h"
 #include "Compression.h"
 
+
 Image *image;
 void compression();
 
@@ -192,17 +193,25 @@ void compression(){
   //   printf(" %u |",compressed_tab_couleur[i]);
   // }
   // printf("\n");
-  int facteur = 2;
-  convert_to_palette_color(compressed_tab_couleur,nbr_el_cmp*3,facteur);
-  unsigned char * tab_coul_depuis_coul_cmp ;
-  tab_coul_depuis_coul_cmp = tab_couleur_creation_depuis_rgb_compresse(compressed_tab_couleur ,size/3,nbr_el_cmp);
+  int facteur = 3;
+  // convert_to_palette_color(compressed_tab_couleur,nbr_el_cmp*3,facteur);
+  // unsigned char * tab_coul_depuis_coul_cmp ;
+  // tab_coul_depuis_coul_cmp = tab_couleur_creation_depuis_rgb_compresse(compressed_tab_couleur ,size/3,nbr_el_cmp);
+  // image->data = tab_coul_depuis_coul_cmp;
+  // verif(tab_coul_depuis_coul_cmp,size);
 
   // printf(" tab_coul_depuis_coul_cmp : ");
   // for(int i = 0 ;i< size; i++){
   //   printf(" %u |",tab_coul_depuis_coul_cmp[i]);
   // }
   // printf("\n");
-  image->data = tab_coul_depuis_coul_cmp;
+
+  unsigned char * dither_tab ;
+  dither_tab = tab_couleur_creation_dithering(image, NULL, size/3,facteur);
+  image->data = dither_tab;
+  verif(dither_tab,size);
+
+  
 
 }
 
@@ -258,12 +267,13 @@ void Affiche_tab(unsigned int *tab, int size){
 }
 
 
+
 // int main(int argc, char **argv){
 
 //   int nbr_pixel = 8; 
 //   // unsigned int a = 4294967050 ;
 //   unsigned int * tab_resultat;
-//   unsigned char tab_test[24] = {42,0,0,45,0,4,1,34,0,1,0,0,1,128,0,1,0,0,1,6,0,1,0,0};
+//   unsigned char tab_test[24] = {10,70,150,230,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255};
   
 //   // unsigned int tab_test[15] = {0,56,21,9,0,1,0,9,0,56,21,9,0,1,1};
 
@@ -306,6 +316,9 @@ void Affiche_tab(unsigned int *tab, int size){
 //   }
 //   printf("\n");
 
+
+
+
 //   // unsigned int * tab_dcmp;
 //   // tab_dcmp = tab_decompresse(compresse_tab_result,nbr_el_cmp,nbr_pixel);
 
@@ -345,15 +358,38 @@ void Affiche_tab(unsigned int *tab, int size){
 
 //   int facteur = 3;
 //   convert_to_palette_color(compressed_tab_couleur,nbr_el_cmp*3,facteur);
-  
-//   unsigned char * tab_coul_depuis_coul_cmp ;
-//   tab_coul_depuis_coul_cmp = tab_couleur_creation_depuis_rgb_compresse(compressed_tab_couleur ,nbr_pixel,nbr_el_cmp);
-
-//   printf(" tab_coul_depuis_coul_cmp : ");
-//   for(int i = 0 ;i< nbr_pixel*3; i++){
-//     printf(" %u |",tab_coul_depuis_coul_cmp[i]);
+//     printf(" Apres conv palette col  : ");
+//   for(int i = 0 ;i< nbr_el_cmp*3; i++){
+//     printf(" %u |",compressed_tab_couleur[i]);
 //   }
 //   printf("\n");
+
+//   // unsigned char * tab_coul_depuis_coul_cmp ;
+//   // tab_coul_depuis_coul_cmp = tab_couleur_creation_depuis_rgb_compresse(compressed_tab_couleur ,nbr_pixel,nbr_el_cmp);
+//   //   printf(" tab_coul_depuis_coul_cmp : ");
+//   // for(int i = 0 ;i< nbr_pixel*3; i++){
+//   //   printf(" %u |",tab_coul_depuis_coul_cmp[i]);
+//   // }
+//   // printf("\n");
+
+//   stock_couleur_reff(compressed_tab_couleur,nbr_el_cmp*3,facteur);
+//     printf(" stock_color_reff : ");
+//   for(int i = 0 ;i< nbr_el_cmp*3; i++){
+//     printf(" %u |",compressed_tab_couleur[i]);
+//   }
+//   printf("\n");
+
+
+//   unsigned char * tab_coul_depuis_coul_reff ;
+//   tab_coul_depuis_coul_reff = tab_couleur_creation_depuis_rgb_compresse(compressed_tab_couleur ,nbr_pixel,nbr_el_cmp);
+//     printf(" tab_coul_depuis_coul_reff : ");
+//   for(int i = 0 ;i< nbr_pixel*3; i++){
+//     printf(" %u |",tab_coul_depuis_coul_reff[i]);
+//   }
+//   printf("\n");
+
+
+
 
 //   // print_tab_ind_couleur(nbr_pixel);
 
@@ -365,3 +401,38 @@ void Affiche_tab(unsigned int *tab, int size){
 // }
 
 
+
+
+// int main(int argc, char **argv){
+//   int nbr_pixel = 8;
+//   unsigned char tab_test[24] = {10,70,150,230,55,255,0,255,55/*core*/,76,255,255,255,255,80,255,255,255,255,255,255,255,255,255};
+//   int width = 4;
+//   int height = 2;
+//   Image im = {4,2,tab_test};
+
+//   for(int i = 0 ;i<height; i++){
+//     for(int j =0; j< width*3; j++){
+//       printf(" %u |",im.data[j+i*width]);
+//     }
+//     printf("\n");
+//   }
+
+//   int facteur = 1;
+//   unsigned char * dither_tab ;
+//   dither_tab = tab_couleur_creation_dithering(&im, NULL, nbr_pixel,facteur);
+
+//   printf("\ndithered tab : \n");
+//   for(int i = 0 ;i<height; i++){
+//     for(int j =0; j< width*3; j++){
+//       printf(" %u |",dither_tab[j+i*width]);
+//     }
+//     printf("\n");
+//   }
+
+//   // unsigned char b = 14.7;
+//   // printf(" %u ",b);
+
+
+
+//   return 0;
+// }

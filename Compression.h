@@ -30,5 +30,8 @@ unsigned int * tab_decompresse(unsigned int * tab_compressed, int nbr_el_cmp, in
 void trier_tableau_ind(int size);
 unsigned char * tab_couleur_creation_depuis_rgb_compresse(unsigned char * tab_coul_cmp ,int nbr_pixel,int nbr_el_cmp);
 void convert_to_palette_color(unsigned char * tab_coul_cmp ,int nbr_el_cmp,int facteur);
+void stock_couleur_reff(unsigned char * tab_coul_cmp ,int nbr_el_cmp,int facteur);
+unsigned char * tab_couleur_creation_dithering(Image * image_origine ,unsigned char * tab_reff_color,int nbr_pixel, int facteur);
+void verif(unsigned char * im, int nbr_col);
 
 #endif
