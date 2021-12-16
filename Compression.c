@@ -160,6 +160,17 @@ unsigned char * tab_couleur_creation(unsigned int * tab_moyenne ,int taille){
     return tab_couleur;
 }
 
+
+void convert_to_palette_color(unsigned char * tab_coul_cmp ,int nbr_el_cmp,int facteur){
+    for(int i = 0 ;i< nbr_el_cmp*3; i++){
+        // tab_coul_cmp[i] = (int) (((float)facteur*tab_coul_cmp[i]/255)+0.5) * (255/facteur);
+        tab_coul_cmp[i] =  (int)(facteur*(tab_coul_cmp[i]/255.0)+(0.5))  * (255/facteur /* 42 */);
+
+    }
+}
+
+
+
 unsigned char * tab_couleur_creation_depuis_rgb_compresse(unsigned char * tab_coul_cmp ,int nbr_pixel,int nbr_el_cmp){
 
     unsigned char * tab_couleur = (unsigned char*) calloc(nbr_pixel*3, sizeof(unsigned char));

@@ -29,5 +29,6 @@ int compter_taille_tab_compresse(unsigned int * tab_resultat_ordonne, int nbr_pi
 unsigned int * tab_decompresse(unsigned int * tab_compressed, int nbr_el_cmp, int nbr_pixel);
 void trier_tableau_ind(int size);
 unsigned char * tab_couleur_creation_depuis_rgb_compresse(unsigned char * tab_coul_cmp ,int nbr_pixel,int nbr_el_cmp);
+void convert_to_palette_color(unsigned char * tab_coul_cmp ,int nbr_el_cmp,int facteur);
 
 #endif
