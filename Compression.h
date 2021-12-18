@@ -35,5 +35,6 @@ unsigned char * tab_couleur_creation_dithering(Image * image_origine ,unsigned c
 void verif(unsigned char * im, int nbr_col);
 unsigned char * indice_palette_creation(unsigned char * tab_couleur_dither, int nbr_pixel);
 unsigned char * create_image_from_index_ref(unsigned char * tab_index, int nbr_pixel);
+unsigned char * tab_couleur_creation_dithering_avec_debordement(Image * image_origine ,unsigned char * tab_reff_color,int nbr_pixel, int facteur);
 
 #endif

@@ -288,7 +288,7 @@ unsigned char * tab_couleur_creation(unsigned int * tab_moyenne ,int taille){
         tab_moy_char = ((unsigned char*)tab_moy_ref);
         tab_moy_char+=3;
 
-        // printf(" %p  %u \n",tab_moy_char,*(tab_moy_char));
+        // // printf(" %p  %u \n",tab_moy_char,*(tab_moy_char));
         ind_shift = 0;
         ind_rgb = 0;
         rgb[0]=rgb[1]=rgb[2]=0;
@@ -412,83 +412,74 @@ unsigned char * tab_couleur_creation_dithering(Image * image_origine ,unsigned c
 
 
 //  Cette version n'empéche pas  de dépasser la valeur 0 vers les nombres nègatifes
-// unsigned char * tab_couleur_creation_dithering(Image * image_origine ,unsigned char * tab_reff_color,int nbr_pixel, int facteur){
-//     unsigned char * dithred_image = (unsigned char *)calloc(nbr_pixel*3,sizeof(unsigned char));
-//     assert(dithred_image);
-//     unsigned char * pixel = (unsigned char *)calloc(3,sizeof(unsigned char));
-//     assert(pixel);
-//     unsigned char * voisin = (unsigned char *)calloc(3,sizeof(unsigned char));
-//     assert(voisin);
-//     int w = image_origine->sizeX;
-//     unsigned char old_r,old_g,old_b, new_r,new_g,new_b;
-//     int error_r,error_g,error_b;
-//     int ind_x, ind_y;
-//     int ind_courant;
+unsigned char * tab_couleur_creation_dithering_avec_debordement(Image * image_origine ,unsigned char * tab_reff_color,int nbr_pixel, int facteur){
+    unsigned char * dithred_image = (unsigned char *)calloc(nbr_pixel*3,sizeof(unsigned char));
+    assert(dithred_image);
+    unsigned char * pixel = (unsigned char *)calloc(3,sizeof(unsigned char));
+    assert(pixel);
+    unsigned char * voisin = (unsigned char *)calloc(3,sizeof(unsigned char));
+    assert(voisin);
+    int w = image_origine->sizeX;
+    unsigned char old_r,old_g,old_b, new_r,new_g,new_b;
+    int error_r,error_g,error_b;
+    int ind_x, ind_y;
+    int ind_courant;
 
-// //    printf("\n je suis dans la fonction dithering \n");
-// //     for(int i = 0 ;i<image_origine->sizeY; i++){
-// //         for(int j =0; j< image_origine->sizeX*3; j++){
-// //             printf(" %u |",image_origine->data[j+i*image_origine->sizeX]);
-// //         }
-// //     printf("\n");
-// //   }
 
-//     for(int y = 0 ; y< image_origine-> sizeY-1 ; y++){
-//         for(int x = 1 ; x < image_origine-> sizeX-1; x++ ){
-//             ind_courant = indice(x,y,w);
+    for(int y = 0 ; y< image_origine-> sizeY-1 ; y++){
+        for(int x = 1 ; x < image_origine-> sizeX-1; x++ ){
+            ind_courant = indice(x,y,w);
             
-//             pixel = image_origine->data+(ind_courant);
-//             old_r = pixel[0];
-//             old_g = pixel[1];
-//             old_b = pixel[2];
-
-//             // printf( "\n %u | %u | %u |\n",old_r,old_g,old_b);
-
-//             new_r =  (unsigned char )(facteur*(old_r/255.0)+(0.5))*(255/facteur /* 42 */);
-//             new_g =  (unsigned char)(facteur*(old_g/255.0)+(0.5))*(255/facteur /* 42 */);    
-//             new_b =  (unsigned char)(facteur*(old_b/255.0)+(0.5))*(255/facteur /* 42 */);
-
-//             pixel = dithred_image+(ind_courant);
-//             pixel[0] = new_r;
-//             pixel[1] = new_g;
-//             pixel[2] = new_b;
-
-//             error_r = old_r - new_r;
-//             error_g = old_g - new_g;
-//             error_b = old_b - new_b;
-
-//             // printf("error : %d , %d , %d\n",error_r,error_g,error_b);
-
-//             // diffusion erreur voisin a droite
-//             voisin = image_origine->data+indice(x+1,y,w);
-//             // le valeurs de voisins ici peuvent être au dessous de 0 ou au dessus de 255
-//             voisin[0] += (error_r*7/16.0) ; 
-//             voisin[1] += (error_g*7/16.0);
-//             voisin[2] += (error_b*7/16.0);
+            pixel = image_origine->data+(ind_courant);
+            old_r = pixel[0];
+            old_g = pixel[1];
+            old_b = pixel[2];
 
 
-//             voisin = image_origine->data+indice(x-1,y+1,w);
-//             // le valeurs de voisins ici peuvent être au dessous de 0 ou au dessus de 255
-//             voisin[0] += (error_r*3/16.0);
-//             voisin[1] += (error_g*3/16.0);
-//             voisin[2] += (error_b*3/16.0);
+            new_r =  (unsigned char )(facteur*(old_r/255.0)+(0.5))*(255/facteur /* 42 */);
+            new_g =  (unsigned char)(facteur*(old_g/255.0)+(0.5))*(255/facteur /* 42 */);    
+            new_b =  (unsigned char)(facteur*(old_b/255.0)+(0.5))*(255/facteur /* 42 */);
 
-//             voisin = image_origine->data+indice(x,y+1,w);
-//             // le valeurs de voisins ici peuvent être au dessous de 0 ou au dessus de 255
-//             voisin[0] += (error_r*5/16.0);
-//             voisin[1] += (error_g*5/16.0);
-//             voisin[2] += (error_b*5/16.0);
+            pixel = dithred_image+(ind_courant);
+            pixel[0] = new_r;
+            pixel[1] = new_g;
+            pixel[2] = new_b;
 
-//             voisin = image_origine->data+indice(x+1,y+1,w);
-//             // le valeurs de voisins ici peuvent être au dessous de 0 ou au dessus de 255
-//             voisin[0] += (error_r*1/16.0);
-//             voisin[1] += (error_g*1/16.0);
-//             voisin[2] += (error_b*1/16.0);
+            error_r = old_r - new_r;
+            error_g = old_g - new_g;
+            error_b = old_b - new_b;
+
+
+            // diffusion erreur voisin a droite
+            voisin = image_origine->data+indice(x+1,y,w);
+            // le valeurs de voisins ici peuvent être au dessous de 0 ou au dessus de 255
+            voisin[0] += (error_r*7/16.0) ; 
+            voisin[1] += (error_g*7/16.0);
+            voisin[2] += (error_b*7/16.0);
+
+
+            voisin = image_origine->data+indice(x-1,y+1,w);
+            // le valeurs de voisins ici peuvent être au dessous de 0 ou au dessus de 255
+            voisin[0] += (error_r*3/16.0);
+            voisin[1] += (error_g*3/16.0);
+            voisin[2] += (error_b*3/16.0);
+
+            voisin = image_origine->data+indice(x,y+1,w);
+            // le valeurs de voisins ici peuvent être au dessous de 0 ou au dessus de 255
+            voisin[0] += (error_r*5/16.0);
+            voisin[1] += (error_g*5/16.0);
+            voisin[2] += (error_b*5/16.0);
+
+            voisin = image_origine->data+indice(x+1,y+1,w);
+            // le valeurs de voisins ici peuvent être au dessous de 0 ou au dessus de 255
+            voisin[0] += (error_r*1/16.0);
+            voisin[1] += (error_g*1/16.0);
+            voisin[2] += (error_b*1/16.0);
             
-//         }
-//     }
-//     return dithred_image;
-// }
+        }
+    }
+    return dithred_image;
+}
 
 
 
@@ -651,26 +642,6 @@ void quickSort_indice(unsigned int t[], int g, int d) {
 }
 
 
-
-// void trier_tableau_ind(int size){
-//     tab_couleur_ord = (int * ) calloc(size, sizeof(int));
-//     assert(tab_couleur_ord);
-//     for(int i = 0; i< size ; i++){
-//         tab_couleur_ord[i] = i;
-//     }
-
-//     quickSort_indice((unsigned int *)tab_ind_coul_im, 0, size-1 ); 
-
-//     printf("tab_ind_ord = ");
-//     for(int i = 0 ; i< size ; i++){
-//         printf(" %d |",tab_couleur_ord[i]);
-//     }
-//     printf("\n");
-
-// }
-
-
-
 unsigned int * tab_decompresse(unsigned int  * tab_compressed, int nbr_el_cmp, int nbr_pixel){
 
     unsigned int * tab_dcmp = (unsigned int *) calloc(nbr_pixel,sizeof(unsigned int));
@@ -687,13 +658,6 @@ unsigned int * tab_decompresse(unsigned int  * tab_compressed, int nbr_el_cmp, i
     
 }
 
-
-// unsigned int * tab_cmp_coul_to_reff(unsigned char * tab_cmp_coul , int nbr_coul_rgb ){
-//     unsigned char * tab_reff = (unsigned char *)calloc(nbr_coul_rgb,sizeof(unsigned char));
-//     assert(tab_reff);
-
-
-// }
 
 void verif(unsigned char * im, int nbr_col){
   for(int i = 0 ; i< nbr_col; i++){
