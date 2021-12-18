@@ -33,7 +33,5 @@ void convert_to_palette_color(unsigned char * tab_coul_cmp ,int nbr_el_cmp,int f
 void stock_couleur_reff(unsigned char * tab_coul_cmp ,int nbr_el_cmp,int facteur);
 unsigned char * tab_couleur_creation_dithering(Image * image_origine ,unsigned char * tab_reff_color,int nbr_pixel, int facteur);
 void verif(unsigned char * im, int nbr_col);
-unsigned char * indice_palette_creation(unsigned char * tab_couleur_dither, int nbr_pixel);
-unsigned char * create_image_from_index_ref(unsigned char * tab_index, int nbr_pixel);
 
 #endif
