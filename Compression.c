@@ -6,6 +6,160 @@
 #include <stdlib.h>
 
 
+unsigned char palette_officiel[64][3]={  
+                                        { 0   ,0   ,0  },
+                                        { 0   ,0   ,85  },
+                                        { 0   ,0   ,170  },
+                                        { 0   ,0   ,255  },
+                                        { 0   ,85  ,0  },
+                                        { 0   ,85  ,85  },
+                                        { 0   ,85  ,170  },
+                                        { 0   ,85  ,255  },
+                                        { 0   ,170 ,0  },
+                                        { 0   ,170 ,85  },
+                                        { 0   ,170 ,170  },
+                                        { 0   ,170 ,255  },
+                                        { 0   ,255 ,0  },
+                                        { 0   ,255 ,85  },
+                                        { 0   ,255 ,170  },
+                                        { 0   ,255 ,255  },
+                                        { 85  ,0   ,0  },
+                                        { 85  ,0   ,85  },
+                                        { 85  ,0   ,170  },
+                                        { 85  ,0   ,255  },
+                                        { 85  ,85  ,0  },
+                                        { 85  ,85  ,85  },
+                                        { 85  ,85  ,170  },
+                                        { 85  ,85  ,255  },
+                                        { 85  ,170 ,0  },
+                                        { 85  ,170 ,85  },
+                                        { 85  ,170 ,170  },
+                                        { 85  ,170 ,255  },
+                                        { 85  ,255 ,0  },
+                                        { 85  ,255 ,85  },
+                                        { 85  ,255 ,170  },
+                                        { 85  ,255 ,255  },
+                                        { 170 ,0   ,0  },
+                                        { 170 ,0   ,85  },
+                                        { 170 ,0   ,170  },
+                                        { 170 ,0   ,255  },
+                                        { 170 ,85  ,0  },
+                                        { 170 ,85  ,85  },
+                                        { 170 ,85  ,170  },
+                                        { 170 ,85  ,255  },
+                                        { 170 ,170 ,0  },
+                                        { 170 ,170 ,85  },
+                                        { 170 ,170 ,170  },
+                                        { 170 ,170 ,255  },
+                                        { 170 ,255 ,0  },
+                                        { 170 ,255 ,85  },
+                                        { 170 ,255 ,170  },
+                                        { 170 ,255 ,255  },
+                                        { 255 ,0   ,0  },
+                                        { 255 ,0   ,85  },
+                                        { 255 ,0   ,170  },
+                                        { 255 ,0   ,255  },
+                                        { 255 ,85  ,0  },
+                                        { 255 ,85  ,85  },
+                                        { 255 ,85  ,170  },
+                                        { 255 ,85  ,255  },
+                                        { 255 ,170 ,0  },
+                                        { 255 ,170 ,85  },
+                                        { 255 ,170 ,170  },
+                                        { 255 ,170 ,255  },
+                                        { 255 ,255 ,0  },
+                                        { 255 ,255 ,85  },
+                                        { 255 ,255 ,170  },
+                                        { 255 ,255 ,255  }
+                                    };
+
+unsigned char * indice_palette_creation(unsigned char * tab_couleur_dither, int nbr_pixel){
+    unsigned char * pal_ind_tab = (unsigned char*)calloc(nbr_pixel,sizeof(unsigned char));
+    assert(pal_ind_tab);
+
+    unsigned char  * pixel = (unsigned char*)calloc(3,sizeof(unsigned char));
+    assert(pixel);
+
+    int ind_debut;
+    pixel = tab_couleur_dither;
+
+    for(int i = 0 ;i < nbr_pixel;i++){
+        if(pixel[0] == 0){
+            ind_debut = 0;
+            for(int j = 0 ;j< 16 ;j++){
+                if(pixel[1] == palette_officiel[ind_debut][1] && pixel[2] == palette_officiel[ind_debut][2]){
+                    pal_ind_tab[i] = ind_debut;
+                    break;
+                }else{
+                    ind_debut++;
+                    continue;
+                }
+                break;
+            }
+        }else if(pixel[0] == 85){
+            ind_debut = 16;
+            for(int j = 0 ;j< 16 ;j++){
+                if(pixel[1] == palette_officiel[ind_debut][1] && pixel[2] == palette_officiel[ind_debut][2]){
+                    pal_ind_tab[i] = ind_debut;
+                    break;
+                }else{
+                    ind_debut++;
+                    continue;
+                }
+                break;
+                
+            }
+        }else if(pixel[0] == 170){
+            ind_debut = 32;
+            for(int j = 0 ;j< 16 ;j++){
+                if(pixel[1] == palette_officiel[ind_debut][1] && pixel[2] == palette_officiel[ind_debut][2]){
+                    pal_ind_tab[i] = ind_debut;
+                    break;
+                }else{
+                    ind_debut++;
+                    continue;
+                }
+                break;
+            }
+        }else{
+            ind_debut = 48;
+            for(int j = 0 ;j< 16 ;j++){
+                if(pixel[1] == palette_officiel[ind_debut][1] && pixel[2] == palette_officiel[ind_debut][2]){
+                    pal_ind_tab[i] = ind_debut;
+                    break;
+                }else{
+                    ind_debut++;
+                    continue;
+                }
+                break; 
+            }
+        }
+        pixel+=3;
+    }
+    return pal_ind_tab;
+}
+
+
+
+unsigned char * create_image_from_index_ref(unsigned char * tab_index, int nbr_pixel){
+    unsigned char * image_color = (unsigned char*)calloc(nbr_pixel*3,sizeof(unsigned char));
+    assert(image_color);
+
+    unsigned char  * pixel = (unsigned char*)calloc(3,sizeof(unsigned char));
+    assert(pixel);
+    pixel = image_color;
+    for(int i = 0 ; i< nbr_pixel; i++){
+        pixel[0] = palette_officiel[tab_index[i]][0];
+        pixel[1] = palette_officiel[tab_index[i]][1];
+        pixel[2] = palette_officiel[tab_index[i]][2];
+        pixel+=3;
+    }
+
+    return image_color;
+}
+
+
+
 // variables global 
 int tab_shift[24] = {7,7,7,6,6,6,5,5,5,4,4,4,3,3,3,2,2,2,1,1,1,0,0,0};
 int * tab_ind_coul_im = NULL; 
@@ -164,7 +318,6 @@ unsigned char * tab_couleur_creation(unsigned int * tab_moyenne ,int taille){
 void convert_to_palette_color(unsigned char * tab_coul_cmp ,int nbr_el_cmp,int facteur){
     for(int i = 0 ;i< nbr_el_cmp*3; i++){
         tab_coul_cmp[i] =  (int)(facteur*(tab_coul_cmp[i]/255.0)+(0.5))*(255/facteur /* 42 */);
-
     }
 }
 
@@ -185,6 +338,10 @@ int indice(int x, int y,int width){
     return  3*(x + y * width);
 }
 
+
+
+
+//  Cette version empêche de dépasser le 0 en bas et le 255 en haut 
 unsigned char * tab_couleur_creation_dithering(Image * image_origine ,unsigned char * tab_reff_color,int nbr_pixel, int facteur){
     unsigned char * dithred_image = (unsigned char *)calloc(nbr_pixel*3,sizeof(unsigned char));
     assert(dithred_image);
@@ -198,14 +355,6 @@ unsigned char * tab_couleur_creation_dithering(Image * image_origine ,unsigned c
     int ind_x, ind_y;
     int ind_courant;
 
-//    printf("\n je suis dans la fonction dithering \n");
-//     for(int i = 0 ;i<image_origine->sizeY; i++){
-//         for(int j =0; j< image_origine->sizeX*3; j++){
-//             printf(" %u |",image_origine->data[j+i*image_origine->sizeX]);
-//         }
-//     printf("\n");
-//   }
-
     for(int y = 0 ; y< image_origine-> sizeY-1 ; y++){
         for(int x = 1 ; x < image_origine-> sizeX-1; x++ ){
             ind_courant = indice(x,y,w);
@@ -214,8 +363,6 @@ unsigned char * tab_couleur_creation_dithering(Image * image_origine ,unsigned c
             old_r = pixel[0];
             old_g = pixel[1];
             old_b = pixel[2];
-
-            // printf( "\n %u | %u | %u |\n",old_r,old_g,old_b);
 
             new_r =  (unsigned char )(facteur*(old_r/255.0)+(0.5))*(255/facteur /* 42 */);
             new_g =  (unsigned char)(facteur*(old_g/255.0)+(0.5))*(255/facteur /* 42 */);    
@@ -230,7 +377,6 @@ unsigned char * tab_couleur_creation_dithering(Image * image_origine ,unsigned c
             error_g = old_g - new_g;
             error_b = old_b - new_b;
 
-            // printf("error : %d , %d , %d\n",error_r,error_g,error_b);
 
             // diffusion erreur voisin a droite
             voisin = image_origine->data+indice(x+1,y,w);
@@ -260,12 +406,12 @@ unsigned char * tab_couleur_creation_dithering(Image * image_origine ,unsigned c
             
         }
     }
-
-
     return dithred_image;
 }
 
 
+
+//  Cette version n'empéche pas  de dépasser la valeur 0 vers les nombres nègatifes
 // unsigned char * tab_couleur_creation_dithering(Image * image_origine ,unsigned char * tab_reff_color,int nbr_pixel, int facteur){
 //     unsigned char * dithred_image = (unsigned char *)calloc(nbr_pixel*3,sizeof(unsigned char));
 //     assert(dithred_image);
@@ -315,34 +461,32 @@ unsigned char * tab_couleur_creation_dithering(Image * image_origine ,unsigned c
 
 //             // diffusion erreur voisin a droite
 //             voisin = image_origine->data+indice(x+1,y,w);
-//             voisin[0] = ((voisin[0] + (error_r*7/16.0)) < 0 | (voisin[0] + (error_r*7/16.0)) > 255) ?  voisin[0] : voisin[0] + (error_r*7/16.0); 
+//             // le valeurs de voisins ici peuvent être au dessous de 0 ou au dessus de 255
+//             voisin[0] += (error_r*7/16.0) ; 
 //             voisin[1] += (error_g*7/16.0);
 //             voisin[2] += (error_b*7/16.0);
 
-//             // printf(" voisine droite with error :  %u %u %u \n",voisin[0],voisin[1],voisin[2]);
 
 //             voisin = image_origine->data+indice(x-1,y+1,w);
+//             // le valeurs de voisins ici peuvent être au dessous de 0 ou au dessus de 255
 //             voisin[0] += (error_r*3/16.0);
 //             voisin[1] += (error_g*3/16.0);
 //             voisin[2] += (error_b*3/16.0);
-//             // printf(" voisine bas gauche with error :  %u %u %u \n",voisin[0],voisin[1],voisin[2]);
 
 //             voisin = image_origine->data+indice(x,y+1,w);
+//             // le valeurs de voisins ici peuvent être au dessous de 0 ou au dessus de 255
 //             voisin[0] += (error_r*5/16.0);
 //             voisin[1] += (error_g*5/16.0);
 //             voisin[2] += (error_b*5/16.0);
-//             // printf(" voisine bas  with error :  %u %u %u \n",voisin[0],voisin[1],voisin[2]);
 
 //             voisin = image_origine->data+indice(x+1,y+1,w);
+//             // le valeurs de voisins ici peuvent être au dessous de 0 ou au dessus de 255
 //             voisin[0] += (error_r*1/16.0);
 //             voisin[1] += (error_g*1/16.0);
 //             voisin[2] += (error_b*1/16.0);
-//             // printf(" voisine bas droite with error :  %u %u %u \n",voisin[0],voisin[1],voisin[2]);
             
 //         }
 //     }
-
-
 //     return dithred_image;
 // }
 
@@ -352,7 +496,6 @@ unsigned char * tab_couleur_creation_depuis_rgb_compresse(unsigned char * tab_co
 
     unsigned char * tab_couleur = (unsigned char*) calloc(nbr_pixel*3, sizeof(unsigned char));
     assert(tab_couleur);
-
     int ind_tab_coul_cmp = 0;
     int ind_tab_rep = 0;
     int ind_tab_couleur_img = 0;
@@ -432,6 +575,7 @@ unsigned int * reorganiser_tab_int(unsigned int * tab_int ,int size){
     return tab_int_interm;
 }
 
+
 int compter_taille_tab_compresse(unsigned int * tab_resultat_ordonne, int nbr_pixel){
     int nbr_el_compresse = 1;
     unsigned int tomp = tab_resultat_ordonne[0];
@@ -441,9 +585,10 @@ int compter_taille_tab_compresse(unsigned int * tab_resultat_ordonne, int nbr_pi
             tomp = tab_resultat_ordonne[i];
         }
     }
-
     return nbr_el_compresse;
 }
+
+
 
 unsigned int * compresse_clut(unsigned int * tab_resultat_ordonne,int nbr_pixel, int nbr_el_cmp){
     // printf(" nombre element compresed = %d\n ",nbr_el_compresse);
@@ -481,6 +626,8 @@ unsigned int * compresse_clut(unsigned int * tab_resultat_ordonne,int nbr_pixel,
   }
     return tab_el_compresse;
 }
+
+
 
 void quickSort_indice(unsigned int t[], int g, int d) {
   int i, j, vpivot, tmp;
@@ -551,6 +698,7 @@ unsigned int * tab_decompresse(unsigned int  * tab_compressed, int nbr_el_cmp, i
 void verif(unsigned char * im, int nbr_col){
   for(int i = 0 ; i< nbr_col; i++){
     if(im[i] != 0 && im[i] != 85 && im[i] != 170 && im[i] != 255){
+      printf("Couleur intrue  %u ",im[i]);
       exit(1);
     }
   }
