@@ -52,6 +52,7 @@ int ImageLoad_PPM(char *filename, Image *img)
 		fprintf(stderr, "'%s' does not have 8-bits components\n", filename);
 		exit(1);
 	}
+	
 	/* allocation memoire */
 	size = img->sizeX * img->sizeY * 3;
 	img->data = (GLubyte *) malloc ((size_t) size * sizeof (GLubyte));
