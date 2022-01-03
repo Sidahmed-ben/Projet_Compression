@@ -36,5 +36,9 @@ void verif(unsigned char * im, int nbr_col);
 unsigned char * indice_palette_creation(unsigned char * tab_couleur_dither, int nbr_pixel);
 unsigned char * create_image_from_index_ref(unsigned char * tab_index, int nbr_pixel);
 unsigned char * tab_couleur_creation_dithering_avec_debordement(Image * image_origine ,unsigned char * tab_reff_color,int nbr_pixel, int facteur);
+unsigned char ieme_bit(unsigned char bloc , int bit, int placer);
+unsigned char * dcmp_6b_to_8b(unsigned char * tab_6b , int taille_tab6);
+unsigned char * cmp_8b_to_6b(unsigned char * tab_8b , int taille_tab8);
+
 
 #endif

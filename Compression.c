@@ -73,6 +73,7 @@ unsigned char palette_officiel[64][3]={
                                         { 255 ,255 ,255  }
                                     };
 
+
 unsigned char * indice_palette_creation(unsigned char * tab_couleur_dither, int nbr_pixel){
     unsigned char * pal_ind_tab = (unsigned char*)calloc(nbr_pixel,sizeof(unsigned char));
     assert(pal_ind_tab);
@@ -107,7 +108,6 @@ unsigned char * indice_palette_creation(unsigned char * tab_couleur_dither, int 
                     continue;
                 }
                 break;
-                
             }
         }else if(pixel[0] == 170){
             ind_debut = 32;
@@ -502,10 +502,6 @@ unsigned char * tab_couleur_creation_depuis_rgb_compresse(unsigned char * tab_co
         ind_tab_coul_cmp++;
 
     }
-
-    // for(int i = 0 ;i< nbr_el_cmp; i++){
-    //     printf(" tab_ind_coul_im[ind_tab_couleur_img] = %d  \n",tab_ind_coul_im[i]);
-    // }    
     return tab_couleur;
 }
 
@@ -522,14 +518,11 @@ void quickSort(unsigned int t[], int g, int d) {
       tmp = t[i]; t[i] = t[j]; t[j] = tmp;
       tmp = tab_ind_coul_im[i]; tab_ind_coul_im[i] = tab_ind_coul_im[j]  ;tab_ind_coul_im[j] = tmp;  
       
-    //   tab_ind_coul_im[i] = j ;  tab_ind_coul_im[j] = i;  
-
     }
     if (i == d)
       return quickSort(t, g, i - 1);
     tmp = t[i]; t[i] = t[d]; t[d] = tmp;
     tmp = tab_ind_coul_im[i]; tab_ind_coul_im[i] = tab_ind_coul_im[d]  ;tab_ind_coul_im[d] = tmp;
-    // tab_ind_coul_im[i] = d ; tab_ind_coul_im[d] = i;  
 
     quickSort(t, g, i - 1);
     quickSort(t, i + 1, d);
@@ -553,13 +546,8 @@ unsigned int * reorganiser_tab_int(unsigned int * tab_int ,int size){
     
     for(int i = 0 ; i < size ; i++){
         tab_int_interm[tab_ind_coul_im[i]] = tab_int[i];
-        // printf(" %d , %d \n ", tab_int_interm[tab_ind_coul_im[i]],tab_ind_coul_im[i]);
     }
 
-    // for(int i = 0 ;i< size ;i++){
-    //     printf(" %u |",tab_int_interm[i]);
-    // }
-    // printf("\n");
 
     free(tab_int);
     tab_int = NULL;
@@ -667,3 +655,67 @@ void verif(unsigned char * im, int nbr_col){
     }
   }
 }
+
+
+
+unsigned char ieme_bit(unsigned char bloc , int bit, int placer){
+    unsigned char and = (bloc>>bit)&1;
+    return and << placer;
+}
+
+
+
+unsigned char * cmp_8b_to_6b(unsigned char * tab_8b , int taille_tab8){
+    int taille_tab6 = (int)(((taille_tab8 *6) /8.0) +0.75) ;
+
+    unsigned char * tab_6b = (unsigned char *)calloc(taille_tab6,sizeof(unsigned char)); 
+    assert(tab_6b);
+
+    int ind_shift_8 = 5;
+    int ind_tab_8 = 0;
+
+    unsigned char tmp = 0 , bit = 0;
+    for(int i = 0 ;i< taille_tab6; i++ ){
+        tmp = 0;
+        for(int j = 0 ; j< 8 ; j++){
+            bit = ieme_bit(tab_8b[ind_tab_8], ind_shift_8, 7-j);
+            tmp = tmp | bit ;
+
+            ind_tab_8   = ind_shift_8 == 0 ? ind_tab_8+1: ind_tab_8;
+            if(ind_tab_8==taille_tab8)
+                break;
+            ind_shift_8 = ind_shift_8 == 0 ? 5 : ind_shift_8-1 ;
+        }
+        tab_6b[i] = tmp;
+    }
+    return tab_6b;
+}
+
+
+unsigned char * dcmp_6b_to_8b(unsigned char * tab_6b , int taille_tab6){
+    int taille_tab8 = (int)(((taille_tab6*8) /6.0) );
+
+    unsigned char * tab_8 = (unsigned char *)calloc(taille_tab8, sizeof(unsigned char));
+    assert(tab_8);
+
+    int ind_tab_6 = 0;
+    int shift_tab6 = 7;
+
+    unsigned char tmp = 0 , bit = 0 ; 
+    for(int i = 0 ; i < taille_tab8 ; i++){
+        tmp = 0;
+        for(int j = 0 ; j < 6 ; j++){
+            bit = ieme_bit(tab_6b[ind_tab_6],shift_tab6, 5-j);
+            tmp = tmp | bit ;
+
+            ind_tab_6  = shift_tab6 == 0 ? ind_tab_6 +1 : ind_tab_6;
+            if(ind_tab_6 == taille_tab6)
+                break;
+            shift_tab6 = shift_tab6 == 0 ? 7            : shift_tab6-1;
+        }
+        tab_8[i] = tmp;
+    }
+
+    return tab_8;
+}
+
