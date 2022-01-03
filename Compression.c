@@ -7,6 +7,11 @@
 #include <stdlib.h>
 
 
+void free_ptr(unsigned char * ptr){
+    free(ptr);
+    ptr = NULL;
+}
+
 unsigned char palette_officiel[64][3]={  
                                         { 0   ,0   ,0  },
                                         { 0   ,0   ,85  },
@@ -80,6 +85,7 @@ unsigned char * indice_palette_creation(unsigned char * tab_couleur_dither, int 
     assert(pal_ind_tab);
 
     unsigned char  * pixel = (unsigned char*)calloc(3,sizeof(unsigned char));
+    unsigned char *copy = pixel;
     assert(pixel);
 
     int ind_debut;
@@ -137,6 +143,10 @@ unsigned char * indice_palette_creation(unsigned char * tab_couleur_dither, int 
         }
         pixel+=3;
     }
+
+    free_ptr(copy);
+    pixel = NULL;
+
     return pal_ind_tab;
 }
 
@@ -147,172 +157,18 @@ unsigned char * create_image_from_index_ref(unsigned char * tab_index, int nbr_p
     assert(image_color);
 
     unsigned char  * pixel = (unsigned char*)calloc(3,sizeof(unsigned char));
+    unsigned char * copy = pixel;
     assert(pixel);
-    pixel = image_color;
+    copy = image_color;
     for(int i = 0 ; i< nbr_pixel; i++){
-        pixel[0] = palette_officiel[tab_index[i]][0];
-        pixel[1] = palette_officiel[tab_index[i]][1];
-        pixel[2] = palette_officiel[tab_index[i]][2];
-        pixel+=3;
+        copy[0] = palette_officiel[tab_index[i]][0];
+        copy[1] = palette_officiel[tab_index[i]][1];
+        copy[2] = palette_officiel[tab_index[i]][2];
+        copy+=3;
     }
-
+    free_ptr(pixel);
+    copy = NULL;
     return image_color;
-}
-
-
-
-// variables global 
-int tab_shift[24] = {7,7,7,6,6,6,5,5,5,4,4,4,3,3,3,2,2,2,1,1,1,0,0,0};
-int * tab_ind_coul_im = NULL; 
-int * tab_repetition = NULL;
- int * tab_couleur_ord = NULL;
-
-void printBits(size_t const size, void const * const ptr)
-{
-    unsigned char *b = (unsigned char*) ptr;
-    unsigned char byte;
-    int i, j;
-    
-    for (i = size-1; i >= 0 ; i--) {
-        for (j = 7; j >=0; j--) {
-            byte = (b[i] >> j) & 1;
-            printf("%u",byte);
-        }
-        printf("/");
-    }
-    puts("");
-}
-
-void print_tab_int_Bits(size_t const size, void const * const ptr)
-{
-    unsigned char *b = (unsigned char*) ptr;
-    unsigned char byte;
-    int i, j;
-    int ind_elmnt_tab = 1;
-    int ind;
-    for(int ind_tab = 0; ind_tab < size ; ind_tab++ ){
-        ind = ind_tab*4;
-        for (i = 3+ind; i >= ind ; i--) {
-            for (j = 7; j >=0; j--) {
-                byte = (b[i] >> j) & 1;
-                printf("%u",byte);
-            }
-            printf("/");
-        }
-        printf(" // ");
-    }
-    puts(" ");
-
-}
-
-
-void AffectBits(size_t const size, void const * const ptr , unsigned char *mon_bloc )
-{
-    unsigned char *b = (unsigned char*) ptr;
-    unsigned char byte;
-    int i, j,ind;
-
-    for (i = 0; i < size; i++) {
-        for (j = 7; j >=0; j--) {
-            byte = (b[i] >> j) & 1;
-            ind = (i*8 +(7-j));
-            if(byte == 1)
-              mon_bloc[ind] = '1';
-            else  
-              mon_bloc[ind] ='0';
-        }
-    }
-}
-
-
-unsigned int * tab_moy_creation(unsigned char * im, int nbr_pixel){
-    unsigned int * tab = (unsigned int*) calloc(nbr_pixel,sizeof(unsigned int));
-    assert(tab);
-
-    /* Initialisation du tableau des indcices des couleurs dans l'image */ 
-    tab_ind_coul_im = (int*) calloc(nbr_pixel,sizeof(int));
-    assert(tab_ind_coul_im);
-    for(int i = 0 ;i< nbr_pixel; i++){
-        tab_ind_coul_im[i] = i;
-    }
-
-    unsigned char  * ptr_char_tab;
-    unsigned int * elem_tab ;
-    unsigned char  r;
-    unsigned char  g;
-    unsigned char  b;
-    unsigned char bit= 0,tmp_elm_tab;
-    int ind_shift = 0;
-    int ind_rgb = 0;
-    unsigned char rgb[3] ;
-
-    for(int i = 0 ;i < nbr_pixel ; i++){
-        ind_shift= 0;
-        ind_rgb = 0;
-        rgb[0] = im[3*i];
-        rgb[1] = im[3*i+2];
-        rgb[2] = im[3*i+1];
-        elem_tab = tab+i;
-        for(int j = 0 ; j< 3 ; j++){
-            ptr_char_tab = (unsigned char *)elem_tab+(3-j);
-            tmp_elm_tab = 0;
-            bit = 0;
-            for(int k = 0 ;k< 8; k++){
-                bit = rgb[ind_rgb%3] >> (tab_shift[ind_shift]) & 1 ;
-                ind_rgb++;
-                bit = bit << (7-k);
-                ind_shift++;
-                tmp_elm_tab |= bit; 
-            }
-            *ptr_char_tab= tmp_elm_tab;
-        }
-    } 
-    return tab;
-}
-
-
-int tab_ind_rgb[24] =  {0,2,1,0,2,1,0,2,1,0,2,1,0,2,1,0,2,1,0,2,1,0,2,1};
-// int tab_shift[24] = {7,7,7,6,6,6,5,5,5,4,4,4,3,3,3,2,2,2,1,1,1,0,0,0};
-
-unsigned char * tab_couleur_creation(unsigned int * tab_moyenne ,int taille){
-
-    unsigned char * tab_couleur = (unsigned char*) calloc(taille*3, sizeof(unsigned char));
-    assert(tab_couleur);
-    unsigned char * tab_moy_char ;
-    unsigned char bit = 0;
-    unsigned char rgb[3] = {0};
-    int ind_rgb   = 0;
-    int ind_shift = 0;
-    unsigned int * tab_moy_ref = tab_moyenne;
-    for(int i = 0 ;i< taille ; i++){
-
-        tab_moy_char = ((unsigned char*)tab_moy_ref);
-        tab_moy_char+=3;
-
-        // // printf(" %p  %u \n",tab_moy_char,*(tab_moy_char));
-        ind_shift = 0;
-        ind_rgb = 0;
-        rgb[0]=rgb[1]=rgb[2]=0;
-        for(int j = 0 ; j< 3 ;j++){
-            for(int k = 0 ; k< 8 ;k++){
-                bit = (*tab_moy_char) >> (7-k) & 1;
-                bit = bit << tab_shift[ind_shift];
-                ind_shift++;
-                rgb[tab_ind_rgb[ind_rgb]] |= bit;
-                ind_rgb++;
-            }
-            // printf(" %p  %u \n",tab_moy_char,*(tab_moy_char));
-            tab_moy_char--;
-        }
-
-        tab_couleur[3*i]   = rgb[0];
-        tab_couleur[3*i+1] = rgb[1];
-        tab_couleur[3*i+2] = rgb[2];
-        tab_moy_ref++;
-        
-    }
-
-    return tab_couleur;
 }
 
 
@@ -323,33 +179,21 @@ void convert_to_palette_color(unsigned char * tab_coul_cmp ,int nbr_el_cmp,int f
 }
 
 
-int palette_color[4] = {0,85,170,255};
-
-void stock_couleur_reff(unsigned char * tab_coul_cmp ,int nbr_el_cmp,int facteur){
-    int ind_tab_col = 0;
-    unsigned char color = 0;
-    for(int i = 0 ;i< nbr_el_cmp*3; i++){
-        color  =  (int)(facteur*(tab_coul_cmp[i]/255.0)+(0.5))  * (255/facteur /* 42 */);
-        ind_tab_col = (int) color/85;
-        tab_coul_cmp[i] = ind_tab_col;
-    }
-}
-
 int indice(int x, int y,int width){
     return  3*(x + y * width);
 }
-
-
-
 
 //  Cette version empêche de dépasser le 0 en bas et le 255 en haut 
 unsigned char * tab_couleur_creation_dithering(Image * image_origine ,unsigned char * tab_reff_color,int nbr_pixel, int facteur){
     unsigned char * dithred_image = (unsigned char *)calloc(nbr_pixel*3,sizeof(unsigned char));
     assert(dithred_image);
     unsigned char * pixel = (unsigned char *)calloc(3,sizeof(unsigned char));
+    unsigned char * cop1 = pixel;
     assert(pixel);
     unsigned char * voisin = (unsigned char *)calloc(3,sizeof(unsigned char));
+    unsigned char * cop2 = voisin;
     assert(voisin);
+
     int w = image_origine->sizeX;
     unsigned char old_r,old_g,old_b, new_r,new_g,new_b;
     int error_r,error_g,error_b;
@@ -406,6 +250,11 @@ unsigned char * tab_couleur_creation_dithering(Image * image_origine ,unsigned c
             
         }
     }
+
+    free_ptr(cop1);
+    free_ptr(cop2);
+    pixel = NULL;
+    voisin = NULL;
     return dithred_image;
 }
 
@@ -416,8 +265,10 @@ unsigned char * tab_couleur_creation_dithering_avec_debordement(Image * image_or
     unsigned char * dithred_image = (unsigned char *)calloc(nbr_pixel*3,sizeof(unsigned char));
     assert(dithred_image);
     unsigned char * pixel = (unsigned char *)calloc(3,sizeof(unsigned char));
+    unsigned char * cop1 = pixel;
     assert(pixel);
     unsigned char * voisin = (unsigned char *)calloc(3,sizeof(unsigned char));
+    unsigned char * cop2 = voisin;
     assert(voisin);
     int w = image_origine->sizeX;
     unsigned char old_r,old_g,old_b, new_r,new_g,new_b;
@@ -478,81 +329,14 @@ unsigned char * tab_couleur_creation_dithering_avec_debordement(Image * image_or
             
         }
     }
+
+    free_ptr(cop1);
+    free_ptr(cop2);
+    pixel = NULL;
+    voisin = NULL;
     return dithred_image;
 }
 
-
-
-unsigned char * tab_couleur_creation_depuis_rgb_compresse(unsigned char * tab_coul_cmp ,int nbr_pixel,int nbr_el_cmp){
-
-    unsigned char * tab_couleur = (unsigned char*) calloc(nbr_pixel*3, sizeof(unsigned char));
-    assert(tab_couleur);
-    int ind_tab_coul_cmp = 0;
-    int ind_tab_rep = 0;
-    int ind_tab_couleur_img = 0;
-
-    for(int i = 0 ; i< nbr_el_cmp /* a verifier */ ; i++){
-        for(int j = 0 ; j < tab_repetition[ind_tab_rep]  ; j++){
-            tab_couleur[tab_ind_coul_im[ind_tab_couleur_img]*3]   = tab_coul_cmp[ind_tab_coul_cmp*3];
-            tab_couleur[tab_ind_coul_im[ind_tab_couleur_img]*3+1] = tab_coul_cmp[ind_tab_coul_cmp*3+1];
-            tab_couleur[tab_ind_coul_im[ind_tab_couleur_img]*3+2] = tab_coul_cmp[ind_tab_coul_cmp*3+2];
-            ind_tab_couleur_img++;
-        }
-        ind_tab_rep++;
-        ind_tab_coul_cmp++;
-
-    }
-    return tab_couleur;
-}
-
-
-
-void quickSort(unsigned int t[], int g, int d) {
-  int i, j, vpivot, tmp;
-  if( d > g ) {
-    vpivot = t[d]; i = g - 1; j = d;
-    for(;;) {
-      while(t[++i] < vpivot);
-      while(t[--j] > vpivot) if(j == i) break;
-      if(i >= j) break;
-      tmp = t[i]; t[i] = t[j]; t[j] = tmp;
-      tmp = tab_ind_coul_im[i]; tab_ind_coul_im[i] = tab_ind_coul_im[j]  ;tab_ind_coul_im[j] = tmp;  
-      
-    }
-    if (i == d)
-      return quickSort(t, g, i - 1);
-    tmp = t[i]; t[i] = t[d]; t[d] = tmp;
-    tmp = tab_ind_coul_im[i]; tab_ind_coul_im[i] = tab_ind_coul_im[d]  ;tab_ind_coul_im[d] = tmp;
-
-    quickSort(t, g, i - 1);
-    quickSort(t, i + 1, d);
-  }
-}
-
-
-void print_tab_ind_couleur(int size){
-    printf("tab_ind_coul : ");
-    for(int i = 0 ; i< size; i++){
-        printf(" %u |",tab_ind_coul_im[i]);
-    }
-    printf("\n");
-}
-
-
-unsigned int * reorganiser_tab_int(unsigned int * tab_int ,int size){
-    unsigned int * tab_int_interm = (unsigned int *)calloc(size, sizeof(unsigned int));
-    assert(tab_int_interm);
-
-    
-    for(int i = 0 ; i < size ; i++){
-        tab_int_interm[tab_ind_coul_im[i]] = tab_int[i];
-    }
-
-
-    free(tab_int);
-    tab_int = NULL;
-    return tab_int_interm;
-}
 
 
 int compter_taille_tab_compresse(unsigned int * tab_resultat_ordonne, int nbr_pixel){
@@ -565,95 +349,6 @@ int compter_taille_tab_compresse(unsigned int * tab_resultat_ordonne, int nbr_pi
         }
     }
     return nbr_el_compresse;
-}
-
-
-
-unsigned int * compresse_clut(unsigned int * tab_resultat_ordonne,int nbr_pixel, int nbr_el_cmp){
-    // printf(" nombre element compresed = %d\n ",nbr_el_compresse);
-
-    int nbr_el_compresse = compter_taille_tab_compresse(tab_resultat_ordonne,nbr_pixel);
-
-    unsigned int  * tab_el_compresse = (unsigned int *)calloc(nbr_el_compresse , sizeof(unsigned int));
-    assert(tab_el_compresse);
-
-    tab_repetition = (int *)calloc(nbr_el_compresse , sizeof(int));
-    assert(tab_repetition);
-
-    int ind_tab_el_cmp = 0;
-    unsigned int tmp = tab_resultat_ordonne[0];
-
-    // tab_el_compresse[0].val = tmp;
-    // tab_el_compresse[0].nbr_pixel_val = 1;
-    tab_el_compresse[0] = tmp;
-    tab_repetition[0]= 1;
-
-    for(int i = 1 ; i< nbr_pixel; i++){
-        if( tmp == tab_resultat_ordonne[i] ){
-            // tab_el_compresse[ind_tab_el_cmp].nbr_pixel_val++;
-            tab_repetition[ind_tab_el_cmp]++;
-        }else{
-            tmp = tab_resultat_ordonne[i];
-            // tab_el_compresse[++ind_tab_el_cmp].val = tmp;
-            // tab_el_compresse[ind_tab_el_cmp].nbr_pixel_val = 1;
-            tab_el_compresse[++ind_tab_el_cmp] = tmp;
-            tab_repetition[ind_tab_el_cmp]= 1;
-        }
-    }
-    for(int i = 0 ; i< nbr_el_compresse; i++){
-    // printf(" %u -> %u fois \n",tab_el_compresse[i],tab_repetition[i]);
-  }
-    return tab_el_compresse;
-}
-
-
-
-void quickSort_indice(unsigned int t[], int g, int d) {
-  int i, j, vpivot, tmp;
-  if( d > g ) {
-    vpivot = t[d]; i = g - 1; j = d;
-    for(;;) {
-      while(t[++i] < vpivot);
-      while(t[--j] > vpivot) if(j == i) break;
-      if(i >= j) break;
-      tmp = t[i]; t[i] = t[j]; t[j] = tmp;
-      tmp = tab_couleur_ord[i]; tab_couleur_ord[i] = tab_couleur_ord[j] ; tab_couleur_ord[j] = tmp;
-    }
-    if (i == d)
-      return quickSort(t, g, i - 1);
-    tmp = t[i]; t[i] = t[d]; t[d] = tmp;
-    tmp= tab_couleur_ord[i];  tab_couleur_ord[i]=tab_couleur_ord[d] ; tab_couleur_ord[d] = tmp;
-
-    quickSort(t, g, i - 1);
-    quickSort(t, i + 1, d);
-  }
-}
-
-
-unsigned int * tab_decompresse(unsigned int  * tab_compressed, int nbr_el_cmp, int nbr_pixel){
-
-    unsigned int * tab_dcmp = (unsigned int *) calloc(nbr_pixel,sizeof(unsigned int));
-    assert(tab_dcmp);
-    int indice_tab_coul = 0;
-    for(int j = 0 ; j< nbr_el_cmp ; j++){
-        for(int i = 0 ; i< tab_repetition[j] ; i++){
-            tab_dcmp[tab_ind_coul_im[indice_tab_coul]] = tab_compressed[j];
-            indice_tab_coul++;
-        }
-    }
-
-    return tab_dcmp;
-    
-}
-
-
-void verif(unsigned char * im, int nbr_col){
-  for(int i = 0 ; i< nbr_col; i++){
-    if(im[i] != 0 && im[i] != 85 && im[i] != 170 && im[i] != 255){
-      printf("Couleur intrue  %u ",im[i]);
-      exit(1);
-    }
-  }
 }
 
 
@@ -690,6 +385,7 @@ unsigned char * cmp_8b_to_6b(unsigned char * tab_8b , int taille_tab8){
     }
     return tab_6b;
 }
+
 
 
 unsigned char * dcmp_6b_to_8b(unsigned char * tab_6b , int taille_tab6){
@@ -742,14 +438,14 @@ void Compression(char * fich_cmp,int debordement, Image * image){
   }else{
     dither_tab = tab_couleur_creation_dithering(image_copy, NULL, size/3,facteur);
   }
-  unsigned char  * palette_index_tab = indice_palette_creation(dither_tab,size/3);
 
+  unsigned char  * palette_index_tab = indice_palette_creation(dither_tab,size/3);
   // compresser le tableau des indices 
   unsigned char * tableau_indices_compresse = cmp_8b_to_6b(palette_index_tab, size/3);
-
   if(debordement){
-    unsigned char * image_coul = create_image_from_index_ref(palette_index_tab, size/3);
+    /* a liberrer */ unsigned char * image_coul = create_image_from_index_ref(palette_index_tab, size/3);
     image->data = image_coul;
+    
 
   }else{
     FILE * stream = fopen(fich_cmp, "wb" );
@@ -759,12 +455,9 @@ void Compression(char * fich_cmp,int debordement, Image * image){
       exit(1);
     }
 
-    printf(" %lu ",sizeof(palette_index_tab)*size/3);
-
     int size_av_cmp  = size/3;
     int element_size = (int)(((size_av_cmp *6) /8.0) +0.75);
     int elements_to_write = 1;
-
     fwrite(&width,2,1,stream);
     fwrite(&height,2,1,stream);
     printf(" width_written = %d \n",width); 
@@ -772,7 +465,17 @@ void Compression(char * fich_cmp,int debordement, Image * image){
     size_t elements_written = fwrite(tableau_indices_compresse, element_size, elements_to_write, stream);
     fclose(stream);
   }
+
+    free(image_copy->data);
+    image_copy->data = NULL;
+    free(image_copy);
+    image_copy = NULL;
+    free_ptr(tableau_indices_compresse);
+    free_ptr(palette_index_tab);
+
 }
+
+
 
 
 Image * init_image_from_cmp_file(int width ,int height, unsigned char * color){
@@ -784,11 +487,8 @@ Image * init_image_from_cmp_file(int width ,int height, unsigned char * color){
   image->sizeX = width;
   image->sizeY = height;
   /* allocation memoire */
-	int size = width* height* 3;
-  image->data = (unsigned char *)calloc(size,sizeof(unsigned char));
-  assert(image->data);
-	image->data = color;
-
+  int size = width* height* 3;
+  image->data = color;
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glShadeModel(GL_FLAT);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -827,16 +527,14 @@ Image* Decompression(char * nom_fichier, Image * image){
   int elements_to_read = 1;
 
   size_t elements_readen = fread(palette_index_from_file,element_size , elements_to_read, stream); 
-
-
   // decompresser le tableau des indices 
   unsigned char * tableau_index_dcmp  =  dcmp_6b_to_8b(palette_index_from_file,nbr_elem_lire);
-
-
   unsigned char * image_coul = create_image_from_index_ref(tableau_index_dcmp, nbr_pixel);
   image = init_image_from_cmp_file(width_readen,height_readen,image_coul);
   fclose(stream);
 
+
+  free_ptr(tableau_index_dcmp);
   return image ;
 
 }
