@@ -12,12 +12,10 @@ Image *image;
 unsigned char * copy_image;
 
 char Mode = 0;
-void compression();
 void Demo_compression_sans_dithering();
-void Compression(char * fich_cmp,int debordement);
 void Save_im_origin();
 void recuperer_riginal_image();
-void init_image_from_cmp_file(int width ,int height, unsigned char * color);
+// void init_image_from_cmp_file(int width ,int height, unsigned char * color);
 
 #define ESCAPE 27
 
@@ -125,7 +123,7 @@ void menuFunc(int item) {
     break;
   case 3:
     // Compression d'image avec dithering mais avec le débordement.
-    Compression(NULL,1);
+    Compression(NULL,1,image);
     Display();
     break;
   default:
@@ -149,138 +147,11 @@ void Save_im_origin(){
 }
 
 
-
-
-void Compression(char * fich_cmp,int debordement){
-  int facteur = 3;
-  unsigned short width = image->sizeX;
-  unsigned short height = image -> sizeY;
-  int size = width* height *3;
-  Image * image_copy = (Image*)calloc(1,sizeof(Image));
-  assert(image_copy);
-
-  image_copy->sizeX = image->sizeX;
-  image_copy-> sizeY = image->sizeY;
-  image_copy->data = (unsigned char *)calloc(size,sizeof(unsigned char));
-  assert(image_copy->data);
-
-  memcpy(image_copy->data, image->data, size);
-
-  unsigned char * dither_tab ;
-  if(debordement){
-    dither_tab = tab_couleur_creation_dithering_avec_debordement(image_copy, NULL, size/3,facteur);
-  }else{
-    dither_tab = tab_couleur_creation_dithering(image_copy, NULL, size/3,facteur);
-  }
-
-  unsigned char  * palette_index_tab = indice_palette_creation(dither_tab,size/3);
-
-  // compresser le tableau des indices 
-  unsigned char * tableau_indices_compresse = cmp_8b_to_6b(palette_index_tab, size/3);
-
-
-  if(debordement){
-    unsigned char * image_coul = create_image_from_index_ref(palette_index_tab, size/3);
-    image->data = image_coul;
-
-  }else{
-      FILE * stream = fopen(fich_cmp, "wb" );
-      if (stream == NULL)  /* If an error occurs during the file creation */
-      {  
-        fprintf(stderr, "Veuillez Saisir un nom de fichier \n");
-        exit(1);
-      }
-
-      printf(" %lu ",sizeof(palette_index_tab)*size/3);
-
-      int size_av_cmp  = size/3;
-      int element_size = (int)(((size_av_cmp *6) /8.0) +0.75);
-      int elements_to_write = 1;
-
-      fwrite(&width,2,1,stream);
-      fwrite(&height,2,1,stream);
-      printf(" width_written = %d \n",width); 
-      printf(" height_written =  %d \n",height);
-      size_t elements_written = fwrite(tableau_indices_compresse, element_size, elements_to_write, stream);
-      fclose(stream);
-  }
- 
-}
-
-
-
-void init_image_from_cmp_file(int width ,int height, unsigned char * color){
-  image = (Image *) malloc(sizeof(Image));
-  if (image == NULL) {
-    fprintf(stderr, "Out of memory\n");
-    exit(-1);
-  }
-  image->sizeX = width;
-  image->sizeY = height;
-  /* allocation memoire */
-	int size = width* height* 3;
-  image->data = (unsigned char *)calloc(size,sizeof(unsigned char));
-  assert(image->data);
-	image->data = color;
-
-  glClearColor(0.0, 0.0, 0.0, 0.0);
-  glShadeModel(GL_FLAT);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  glutReshapeWindow(width, height);
-
-}
-
-
-
-
-void Decompression(char * nom_fichier){
-
-  int nbr_pixel = 0 ,nbr_elem_lire = 0;
-  int width_readen = 0,height_readen = 0;
-
-  FILE * stream = fopen(nom_fichier, "rb" );
-  if (stream == NULL)  /* If an error occurs during the file creation */
-  {  
-      fprintf(stderr, "Veuillez Saisir un nom de fichier valide \n");
-      exit(1);
-  }
-
-  fread(&width_readen,2,1,stream);
-  fread(&height_readen,2,1,stream);
-
-  nbr_pixel     = width_readen*height_readen;
-  nbr_elem_lire = (int)(((nbr_pixel *6) /8.0) +0.75);
-
-  printf(" width_readen = %d  , height_readen = %d  \n",width_readen,height_readen);
-
-  unsigned char * palette_index_from_file = (unsigned char *)calloc(nbr_elem_lire,sizeof(unsigned char));
-  assert(palette_index_from_file);
-
-
-  int element_size = nbr_elem_lire;
-  int elements_to_read = 1;
-
-  size_t elements_readen = fread(palette_index_from_file,element_size , elements_to_read, stream); 
-
-
-  // decompresser le tableau des indices 
-  unsigned char * tableau_index_dcmp  =  dcmp_6b_to_8b(palette_index_from_file,nbr_elem_lire);
-
-
-  unsigned char * image_coul = create_image_from_index_ref(tableau_index_dcmp, nbr_pixel);
-  init_image_from_cmp_file(width_readen,height_readen,image_coul);
-  fclose(stream);
-
-}
-
-
 void Demo_compression_sans_dithering(){
   int facteur = 3;
   int size = image->sizeX* image->sizeY *3;
   convert_to_palette_color(image->data,image->sizeX* image->sizeY,facteur);
 }
-
-
 
 
 int main(int argc, char **argv) {  
@@ -304,7 +175,7 @@ int main(int argc, char **argv) {
     // initialisation de l'image
     Init(argv[2]);
     // Compression de l'image
-    Compression(argv[3],0);
+    Compression(argv[3],0,image);
     glutDisplayFunc(Display);  
     glutReshapeFunc(Reshape);
     glutKeyboardFunc(Keyboard);
@@ -321,7 +192,7 @@ int main(int argc, char **argv) {
     glutCreateWindow("VPUP8");  
     
     // Decompression de l'image 
-    Decompression(argv[2]);
+    image = Decompression(argv[2],image);
     glutDisplayFunc(Display);  
     glutReshapeFunc(Reshape);
     glutKeyboardFunc(Keyboard);

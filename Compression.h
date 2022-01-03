@@ -8,6 +8,11 @@
 #include <string.h>
 #include <unistd.h>
 
+
+
+
+
+
 struct  elm_tab_compresse{
     unsigned int val;
     int nbr_pixel_val;
@@ -39,6 +44,9 @@ unsigned char * tab_couleur_creation_dithering_avec_debordement(Image * image_or
 unsigned char ieme_bit(unsigned char bloc , int bit, int placer);
 unsigned char * dcmp_6b_to_8b(unsigned char * tab_6b , int taille_tab6);
 unsigned char * cmp_8b_to_6b(unsigned char * tab_8b , int taille_tab8);
+void Compression(char * fich_cmp,int debordement, Image * image);
+Image * Decompression(char * nom_fichier, Image *img);
+Image * init_image_from_cmp_file(int width ,int height, unsigned char * color);
 
 
 #endif
