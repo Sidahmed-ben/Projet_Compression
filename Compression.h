@@ -18,8 +18,8 @@ unsigned char * tab_couleur_creation_dithering_avec_debordement(Image * image_or
 unsigned char * dcmp_6b_to_8b(unsigned char * tab_6b , int taille_tab6);
 unsigned char * cmp_8b_to_6b(unsigned char * tab_8b , int taille_tab8);
 unsigned char ieme_bit(unsigned char bloc , int bit, int placer);
-void Compression(char * fich_cmp,int debordement, Image * image);
-Image * Decompression(char * nom_fichier, Image *img);
+void Compression(char * fich_cmp,int debordement, Image * image, int mode_vitesse);
+Image * Decompression(char * nom_fichier, Image *img, int mode_vitesse);
 Image * init_image_from_cmp_file(int width ,int height, unsigned char * color);
 void free_ptr(unsigned char * ptr);
 

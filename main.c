@@ -7,15 +7,15 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define ITER 10
 
 Image *image;
 unsigned char * copy_image;
-
 char Mode = 0;
+
 void Demo_compression_sans_dithering();
 void Save_im_origin();
 void recuperer_riginal_image();
-// void init_image_from_cmp_file(int width ,int height, unsigned char * color);
 
 #define ESCAPE 27
 
@@ -43,10 +43,6 @@ void Mouse(int button, int state, int x, int y) {
 }
 
 
-
-
-
-
 int Init(char *s) {
   image = (Image *) malloc(sizeof(Image));
   if (image == NULL) {
@@ -55,8 +51,7 @@ int Init(char *s) {
   }
   if (ImageLoad_PPM(s, image)==-1) 
 	return(-1);
-  printf("tailles %d %d\n",(int) image->sizeX, (int) image->sizeY);
-
+  printf("tailles %d x %d = %d\n",(int) image->sizeX, (int) image->sizeY, (int) image->sizeX * (int) image->sizeY);
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glShadeModel(GL_FLAT);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -105,7 +100,7 @@ void Reshape(int w, int h) {
 
 void menuFunc(int item) {
   char s[256];
-
+  int mode_vitesse = 0;
   switch(item){
   case 0:
     free(image);
@@ -123,7 +118,7 @@ void menuFunc(int item) {
     break;
   case 3:
     // Compression d'image avec dithering mais avec le débordement.
-    Compression(NULL,1,image);
+    Compression(NULL,1,image,mode_vitesse);
     Display();
     break;
   default:
@@ -164,47 +159,33 @@ int main(int argc, char **argv) {
   }
 
   Mode = argv[1][0];
+  glutInit(&argc, argv); 
+  glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
+  glutInitWindowSize(640,480);  
+  glutInitWindowPosition(100, 100);  
+  glutCreateWindow("VPUP8");  
+
+
 
   if(Mode == '1'){
+    int mode_vitesse = 0;
     printf(" Mode Compression \n");
-    glutInit(&argc, argv); 
-    glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
-    glutInitWindowSize(640,480);  
-    glutInitWindowPosition(100, 100);  
-    glutCreateWindow("VPUP8");  
     // initialisation de l'image
     Init(argv[2]);
     // Compression de l'image
-    Compression(argv[3],0,image);
-    glutDisplayFunc(Display);  
-    glutReshapeFunc(Reshape);
-    glutKeyboardFunc(Keyboard);
-    
+    Compression(argv[3],0,image,mode_vitesse);
 
   }else if(Mode == '2'){
 
-    printf(" Mode Déompression \n");
-    
-    glutInit(&argc, argv); 
-    glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
-    glutInitWindowSize(640,480);  
-    glutInitWindowPosition(100, 100);  
-    glutCreateWindow("VPUP8");  
-    
+    printf(" Mode Déompression \n");    
+    int mode_vitesse = 0;
     // Decompression de l'image 
-    image = Decompression(argv[2],image);
-    glutDisplayFunc(Display);  
-    glutReshapeFunc(Reshape);
-    glutKeyboardFunc(Keyboard);
+    image = Decompression(argv[2],image,0);
+
 
 
   }else if(Mode == '3'){
     printf("Mode Demo \n");
-    glutInit(&argc, argv); 
-    glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
-    glutInitWindowSize(640,480);  
-    glutInitWindowPosition(100, 100);  
-    glutCreateWindow("VPUP8");  
     // initialisation de l'image
     Init(argv[2]);
     Save_im_origin();
@@ -217,17 +198,141 @@ int main(int argc, char **argv) {
     glutAttachMenu(GLUT_LEFT_BUTTON);
 
 
-    glutDisplayFunc(Display);  
-    glutReshapeFunc(Reshape);
-    glutKeyboardFunc(Keyboard);
 
-  }else{
+  }else if (Mode == '4'){
+
+    //  Mode vitesse de compression 
+    printf(" MODE VITESSE DE COMPRESSION  \n");
+    int t0=0,t1=0,j=0,res=0,i=0,dt=0;
+    int mode_vitesse = 1;
+    Init(argv[2]);
+
+
+    printf("Compression en cours ....");
+    t0 = clock();
+    // Compresser 10 fois la même image
+    for (j = ITER; j--;) {
+      Compression(NULL,0,image,mode_vitesse);
+    }
+    t1 = clock();
+    dt = t1 - t0;
+    printf(" Compresser %d fois l'image donnée  ==>  %d  ms.\t\t\n",ITER,(int)dt);
+
+    printf("Compression en cours ....");
+    t0 = clock();
+    // Compresser 10 fois la même image
+    for (j = ITER*2; j--;) {
+      Compression(NULL,0,image,mode_vitesse);
+    }
+    t1 = clock();
+    dt = t1 - t0;
+    printf(" Compresser %d fois l'image donnée  ==>  %d  ms.\t\t\n",ITER*2,(int)dt);
+
+    printf("Compression en cours ....");
+    t0 = clock();
+    // Compresser 10 fois la même image
+    for (j = ITER*4; j--;) {
+      Compression(NULL,0,image,mode_vitesse);
+    }
+    t1 = clock();
+    dt = t1 - t0;
+    printf(" Compresser %d fois l'image donnée  ==>  %d  ms.\t\t\n",ITER*4,(int)dt);
+
+    printf("Compression en cours ....");
+    t0 = clock();
+    // Compresser 10 fois la même image
+    for (j = ITER*8; j--;) {
+      Compression(NULL,0,image,mode_vitesse);
+    }
+    t1 = clock();
+    dt = t1 - t0;
+    printf(" Compresser %d fois l'image donnée  ==>  %d  ms.\t\t\n",ITER*8,(int)dt);
+
+    printf("Compression en cours ....");
+    t0 = clock();
+    // Compresser 10 fois la même image
+    for (j = ITER*16; j--;) {
+      Compression(NULL,0,image,mode_vitesse);
+    }
+    t1 = clock();
+    dt = t1 - t0;
+    printf(" Compresser %d fois l'image donnée  ==>  %d  ms.\t\t\n",ITER*16,(int)dt);
+  
+
+
+  }else if (Mode == '5'){
+    printf(" MODE VITESSE DE DECOMPRESSION \n");
+    int t0=0,t1=0,j=0,res=0,i=0,dt=0;
+    int mode_vitesse = 1;
+
+    printf("Decompression en cours ....");
+    t0 = clock();
+    // Compresser 10 fois la même image
+    for (j = ITER; j--;) {
+      image = Decompression(argv[2],image,mode_vitesse);
+    }
+    t1 = clock();
+    dt = t1 - t0;
+    printf(" Decompresser %d fois l'image donnée  ==>  %d  ms.\t\t\n",ITER,(int)dt);
+
+
+
+    printf("Decompression en cours ....");
+    t0 = clock();
+    // Decompresser 10 fois la même image
+    for (j = ITER*2; j--;) {
+      image = Decompression(argv[2],image,mode_vitesse);
+    }
+    t1 = clock();
+    dt = t1 - t0;
+    printf(" Decompresser %d fois l'image donnée  ==>  %d  ms.\t\t\n",ITER*2,(int)dt);
+
+
+    printf("Decompression en cours ....");
+    t0 = clock();
+    // Decompresser 10 fois la même image
+    for (j = ITER*4; j--;) {
+      image = Decompression(argv[2],image,mode_vitesse);
+    }
+    t1 = clock();
+    dt = t1 - t0;
+    printf(" Decompresser %d fois l'image donnée  ==>  %d  ms.\t\t\n",ITER*4,(int)dt);
+
+
+    printf("Decompression en cours ....");
+    t0 = clock();
+    // Decompresser 10 fois la même image
+    for (j = ITER*8; j--;) {
+      image = Decompression(argv[2],image,mode_vitesse);
+    }
+    t1 = clock();
+    dt = t1 - t0;
+    printf(" Decompresser %d fois l'image donnée  ==>  %d  ms.\t\t\n",ITER*8,(int)dt);
+
+
+    printf("Decompression en cours ....");
+    t0 = clock();
+    // Decompresser 10 fois la même image
+    for (j = ITER*16; j--;) {
+      image = Decompression(argv[2],image,mode_vitesse);
+    }
+    t1 = clock();
+    dt = t1 - t0;
+    printf(" Decompresser %d fois l'image donnée  ==>  %d  ms.\t\t\n",ITER*16,(int)dt);
+
+    return 1;
+  }
+
+  else {
     printf(" Mode Inconnu \n ");
     exit(-1);
   }
 
-  
 
+
+  glutDisplayFunc(Display);  
+  glutReshapeFunc(Reshape);
+  glutKeyboardFunc(Keyboard);
   glutMainLoop();  
 
   return 1;

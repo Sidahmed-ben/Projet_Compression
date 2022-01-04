@@ -417,7 +417,7 @@ unsigned char * dcmp_6b_to_8b(unsigned char * tab_6b , int taille_tab6){
 
 
 
-void Compression(char * fich_cmp,int debordement, Image * image){
+void Compression(char * fich_cmp,int debordement, Image * image, int mode_vitesse){
   int facteur = 3;
   unsigned short width = image->sizeX;
   unsigned short height = image -> sizeY;
@@ -442,29 +442,32 @@ void Compression(char * fich_cmp,int debordement, Image * image){
   unsigned char  * palette_index_tab = indice_palette_creation(dither_tab,size/3);
   // compresser le tableau des indices 
   unsigned char * tableau_indices_compresse = cmp_8b_to_6b(palette_index_tab, size/3);
-  if(debordement){
-    /* a liberrer */ unsigned char * image_coul = create_image_from_index_ref(palette_index_tab, size/3);
-    image->data = image_coul;
-    
+  if(!mode_vitesse){
+    if(debordement){
+        /* a liberrer */ unsigned char * image_coul = create_image_from_index_ref(palette_index_tab, size/3);
+        image->data = image_coul;
+        
 
-  }else{
-    FILE * stream = fopen(fich_cmp, "wb" );
-    if (stream == NULL)  /* If an error occurs during the file creation */
-    {  
-      fprintf(stderr, "Veuillez Saisir un nom de fichier \n");
-      exit(1);
-    }
+    }else{
+        FILE * stream = fopen(fich_cmp, "wb" );
+        if (stream == NULL)  /* If an error occurs during the file creation */
+        {  
+        fprintf(stderr, "Veuillez Saisir un nom de fichier \n");
+        exit(1);
+        }
 
-    int size_av_cmp  = size/3;
-    int element_size = (int)(((size_av_cmp *6) /8.0) +0.75);
-    int elements_to_write = 1;
-    fwrite(&width,2,1,stream);
-    fwrite(&height,2,1,stream);
-    printf(" width_written = %d \n",width); 
-    printf(" height_written =  %d \n",height);
-    size_t elements_written = fwrite(tableau_indices_compresse, element_size, elements_to_write, stream);
-    fclose(stream);
+        int size_av_cmp  = size/3;
+        int element_size = (int)(((size_av_cmp *6) /8.0) +0.75);
+        int elements_to_write = 1;
+        fwrite(&width,2,1,stream);
+        fwrite(&height,2,1,stream);
+        // printf(" width_written = %d \n",width); 
+        // printf(" height_written =  %d \n",height);
+        size_t elements_written = fwrite(tableau_indices_compresse, element_size, elements_to_write, stream);
+        fclose(stream);
+    } 
   }
+  
 
     free(image_copy->data);
     image_copy->data = NULL;
@@ -499,7 +502,7 @@ Image * init_image_from_cmp_file(int width ,int height, unsigned char * color){
 }
 
 
-Image* Decompression(char * nom_fichier, Image * image){
+Image* Decompression(char * nom_fichier, Image * image, int mode_vitesse){
 
   int nbr_pixel = 0 ,nbr_elem_lire = 0;
   int width_readen = 0,height_readen = 0;
@@ -517,7 +520,7 @@ Image* Decompression(char * nom_fichier, Image * image){
   nbr_pixel     = width_readen*height_readen;
   nbr_elem_lire = (int)(((nbr_pixel *6) /8.0) +0.75);
 
-  printf(" width_readen = %d  , height_readen = %d  \n",width_readen,height_readen);
+//   printf(" width_readen = %d  , height_readen = %d  \n",width_readen,height_readen);
 
   unsigned char * palette_index_from_file = (unsigned char *)calloc(nbr_elem_lire,sizeof(unsigned char));
   assert(palette_index_from_file);
@@ -530,9 +533,11 @@ Image* Decompression(char * nom_fichier, Image * image){
   // decompresser le tableau des indices 
   unsigned char * tableau_index_dcmp  =  dcmp_6b_to_8b(palette_index_from_file,nbr_elem_lire);
   unsigned char * image_coul = create_image_from_index_ref(tableau_index_dcmp, nbr_pixel);
-  image = init_image_from_cmp_file(width_readen,height_readen,image_coul);
-  fclose(stream);
 
+  if(!mode_vitesse){
+        image = init_image_from_cmp_file(width_readen,height_readen,image_coul);
+        fclose(stream);
+  }
 
   free_ptr(tableau_index_dcmp);
   return image ;
