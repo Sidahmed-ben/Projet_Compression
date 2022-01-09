@@ -93,7 +93,6 @@ void Reshape(int w, int h) {
 }
 
 void menuFunc(int item) {
-  char s[256];
   int mode_vitesse = 0;
   switch (item) {
   case 0:
@@ -134,7 +133,6 @@ void Save_im_origin() {
 
 void Demo_compression_sans_dithering() {
   int facteur = 3;
-  int size = image->sizeX * image->sizeY * 3;
   convert_to_palette_color(image->data, image->sizeX * image->sizeY, facteur);
 }
 
@@ -169,7 +167,7 @@ int main(int argc, char **argv) {
     printf(" Mode Déompression \n");
     int mode_vitesse = 0;
     // Decompression de l'image
-    image = Decompression(argv[2], image, 0);
+    image = Decompression(argv[2], image, mode_vitesse);
 
   } else if (Mode == '3') {
     printf("Mode Demo \n");
@@ -188,7 +186,7 @@ int main(int argc, char **argv) {
 
     //  Mode vitesse de compression
     printf(" MODE VITESSE DE COMPRESSION  \n");
-    int t0 = 0, t1 = 0, j = 0, res = 0, i = 0, dt = 0;
+    int t0 = 0, t1 = 0, j = 0, dt = 0;
     int mode_vitesse = 1;
     Init(argv[2]);
 
@@ -244,7 +242,7 @@ int main(int argc, char **argv) {
 
   } else if (Mode == '5') {
     printf(" MODE VITESSE DE DECOMPRESSION \n");
-    int t0 = 0, t1 = 0, j = 0, res = 0, i = 0, dt = 0;
+    int t0 = 0, t1 = 0, j = 0, dt = 0;
     int mode_vitesse = 1;
 
     printf("Decompression en cours ....");

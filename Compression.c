@@ -153,7 +153,6 @@ unsigned char *tab_couleur_creation_dithering(Image *image_origine,
   int w = image_origine->sizeX;
   unsigned char old_r, old_g, old_b, new_r, new_g, new_b;
   int error_r, error_g, error_b;
-  int ind_x, ind_y;
   int ind_courant;
 
   for (int y = 0; y < image_origine->sizeY - 1; y++) {
@@ -183,62 +182,62 @@ unsigned char *tab_couleur_creation_dithering(Image *image_origine,
 
       // diffusion erreur voisin a droite
       voisin = image_origine->data + indice(x + 1, y, w);
-      voisin[0] = ((voisin[0] + (error_r * 7 / 16.0)) < 0 |
-                   (voisin[0] + (error_r * 7 / 16.0)) > 255)
+      voisin[0] = (((voisin[0] + (error_r * 7 / 16.0)) < 0) |
+                   ((voisin[0] + (error_r * 7 / 16.0)) > 255))
                       ? voisin[0]
                       : voisin[0] + (error_r * 7 / 16.0);
-      voisin[1] = ((voisin[1] + (error_g * 7 / 16.0)) < 0 |
-                   (voisin[1] + (error_g * 7 / 16.0)) > 255)
+      voisin[1] = (((voisin[1] + (error_g * 7 / 16.0)) < 0 ) |
+                   ((voisin[1] + (error_g * 7 / 16.0)) > 255))
                       ? voisin[1]
                       : voisin[1] + (error_g * 7 / 16.0);
-      voisin[2] = ((voisin[2] + (error_b * 7 / 16.0)) < 0 |
-                   (voisin[2] + (error_b * 7 / 16.0)) > 255)
+      voisin[2] = (((voisin[2] + (error_b * 7 / 16.0)) < 0) |
+                   ((voisin[2] + (error_b * 7 / 16.0)) > 255) )
                       ? voisin[2]
                       : voisin[2] + (error_b * 7 / 16.0);
 
 
       voisin = image_origine->data + indice(x - 1, y + 1, w);
-      voisin[0] = ((voisin[0] + (error_r * 3 / 16.0)) < 0 |
-                   (voisin[0] + (error_r * 3 / 16.0)) > 255)
+      voisin[0] = (((voisin[0] + (error_r * 3 / 16.0)) < 0 ) |
+                   ((voisin[0] + (error_r * 3 / 16.0)) > 255) )
                       ? voisin[0]
                       : voisin[0] + (error_r * 3 / 16.0);
-      voisin[1] = ((voisin[1] + (error_g * 3 / 16.0)) < 0 |
-                   (voisin[1] + (error_g * 3 / 16.0)) > 255)
+      voisin[1] = (((voisin[1] + (error_g * 3 / 16.0)) < 0 ) |
+                   ((voisin[1] + (error_g * 3 / 16.0)) > 255) )
                       ? voisin[1]
                       : voisin[1] + (error_g * 3 / 16.0);
-      voisin[2] = ((voisin[2] + (error_b * 3 / 16.0)) < 0 |
-                   (voisin[2] + (error_b * 3 / 16.0)) > 255)
+      voisin[2] = (((voisin[2] + (error_b * 3 / 16.0)) < 0 ) |
+                   ((voisin[2] + (error_b * 3 / 16.0)) > 255))
                       ? voisin[2]
                       : voisin[2] + (error_b * 3 / 16.0);
 
 
       voisin = image_origine->data + indice(x, y + 1, w);
-      voisin[0] = ((voisin[0] + (error_r * 5 / 16.0)) < 0 |
-                   (voisin[0] + (error_r * 5 / 16.0)) > 255)
+      voisin[0] = (((voisin[0] + (error_r * 5 / 16.0)) < 0 ) |
+                   ((voisin[0] + (error_r * 5 / 16.0)) > 255) )
                       ? voisin[0]
                       : voisin[0] + (error_r * 5 / 16.0);
-      voisin[1] = ((voisin[1] + (error_g * 5 / 16.0)) < 0 |
-                   (voisin[1] + (error_g * 5 / 16.0)) > 255)
+      voisin[1] = (((voisin[1] + (error_g * 5 / 16.0)) < 0 ) |
+                   ((voisin[1] + (error_g * 5 / 16.0)) > 255) )
                       ? voisin[1]
                       : voisin[1] + (error_g * 5 / 16.0);
-      voisin[2] = ((voisin[2] + (error_b * 5 / 16.0)) < 0 |
-                   (voisin[2] + (error_b * 5 / 16.0)) > 255)
+      voisin[2] = (((voisin[2] + (error_b * 5 / 16.0)) < 0 ) |
+                   ((voisin[2] + (error_b * 5 / 16.0)) > 255))
                       ? voisin[2]
                       : voisin[2] + (error_b * 5 / 16.0);
       // printf(" voisine bas  with error :  %u %u %u
       // \n",voisin[0],voisin[1],voisin[2]);
 
       voisin = image_origine->data + indice(x + 1, y + 1, w);
-      voisin[0] = ((voisin[0] + (error_r * 1 / 16.0)) < 0 |
-                   (voisin[0] + (error_r * 1 / 16.0)) > 255)
+      voisin[0] = (((voisin[0] + (error_r * 1 / 16.0)) < 0 ) |
+                   ((voisin[0] + (error_r * 1 / 16.0)) > 255))
                       ? voisin[0]
                       : voisin[0] + (error_r * 1 / 16.0);
-      voisin[1] = ((voisin[1] + (error_g * 1 / 16.0)) < 0 |
-                   (voisin[1] + (error_g * 1 / 16.0)) > 255)
+      voisin[1] = (((voisin[1] + (error_g * 1 / 16.0)) < 0 ) |
+                   ((voisin[1] + (error_g * 1 / 16.0)) > 255) )
                       ? voisin[1]
                       : voisin[1] + (error_g * 1 / 16.0);
-      voisin[2] = ((voisin[2] + (error_b * 1 / 16.0)) < 0 |
-                   (voisin[2] + (error_b * 1 / 16.0)) > 255)
+      voisin[2] = (((voisin[2] + (error_b * 1 / 16.0)) < 0 )|
+                   ((voisin[2] + (error_b * 1 / 16.0)) > 255) )
                       ? voisin[2]
                       : voisin[2] + (error_b * 1 / 16.0);
     }
@@ -269,7 +268,6 @@ tab_couleur_creation_dithering_avec_debordement(Image *image_origine,
   int w = image_origine->sizeX;
   unsigned char old_r, old_g, old_b, new_r, new_g, new_b;
   int error_r, error_g, error_b;
-  int ind_x, ind_y;
   int ind_courant;
 
   for (int y = 0; y < image_origine->sizeY - 1; y++) {
@@ -457,7 +455,7 @@ void Compression(char *fich_cmp, int debordement, Image *image,
       int elements_to_write = 1;
       fwrite(&width, 2, 1, stream);
       fwrite(&height, 2, 1, stream);
-      size_t elements_written = fwrite(tableau_indices_compresse, element_size,
+      fwrite(tableau_indices_compresse, element_size,
                                        elements_to_write, stream);
       fclose(stream);
     }
@@ -480,7 +478,6 @@ Image *init_image_from_cmp_file(int width, int height, unsigned char *color) {
   image->sizeX = width;
   image->sizeY = height;
   /* allocation memoire */
-  int size = width * height * 3;
   image->data = color;
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glShadeModel(GL_FLAT);
@@ -516,8 +513,8 @@ Image *Decompression(char *nom_fichier, Image *image, int mode_vitesse) {
   int element_size = nbr_elem_lire;
   int elements_to_read = 1;
 
-  size_t elements_readen =
-      fread(palette_index_from_file, element_size, elements_to_read, stream);
+
+  fread(palette_index_from_file, element_size, elements_to_read, stream);
   unsigned char *tableau_index_dcmp =
       dcmp_6b_to_8b(palette_index_from_file, nbr_elem_lire);
   unsigned char *image_coul =

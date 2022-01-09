@@ -27,7 +27,7 @@ LDFLAGS = -lm $(GL_LDFLAGS)
 #definition des fichiers et dossiers
 PROGNAME = Palette
 HEADERS = ima.h Compression.h
-SOURCES = main.c ppm.c modif.c Compression.c
+SOURCES = main.c ppm.c Compression.c
 #SOURCES = main.c ppm.c modif.c rgb_hls.c
 OBJ = $(SOURCES:.c=.o)
 
